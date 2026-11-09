@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>电影镜头语言 · 可视化词典</title>
+<meta name="description" content="给零基础新手的电影镜头语言可视化词典，用动画演示景别、机位角度、运镜、构图、灯光与转场。">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">◱</span>
+      <div class="brand-text">
+        <h1>电影镜头语言 · 可视化词典</h1>
+        <p>给第一次拿起相机的人：每个术语都配一段一眼能看懂的动画。</p>
+      </div>
+    </div>
+    <span class="topbar-tag">场景全部由 SVG 现场绘制 · 无外部素材</span>
+  </div>
+</header>
+
+<main class="layout">
+  <aside class="rail">
+    <div id="rail-nav"></div>
+    <p class="rail-note">六个分区已全部可用：景别、机位角度、运镜、构图、灯光、转场。每张卡片都能点画面重播。</p>
+  </aside>
+
+  <div class="content">
+    <section class="section" id="section-shots">
+      <div class="section-head">
+        <div>
+          <p class="kicker">01 / SHOT SIZE</p>
+          <h2>景别</h2>
+          <p class="section-desc">相机离人远近不同，画面里留下的东西就不同。先看一排并排对比，再逐张细看每一级的取景动画。</p>
+        </div>
+        <span class="section-count">8 个术语</span>
+      </div>
+
+      <div class="strip-panel">
+        <div class="strip-head">
+          <span>同一场景 · 8 种景别并排看</span>
+          <span class="strip-hint">点缩略图跳到对应卡片</span>
+        </div>
+        <div class="strip" id="shots-strip"></div>
+      </div>
+
+      <div class="cards" id="shots-cards"></div>
+    </section>
+
+    <div id="more-sections"></div>
+    <div id="future-sections"></div>
+  </div>
+</main>
+
+<script src="js/scene.js"></script>
+<script src="js/data/shots.js"></script>
+<script src="js/data/angles.js"></script>
+<script src="js/data/moves.js"></script>
+<script src="js/data/frame.js"></script>
+<script src="js/data/light.js"></script>
+<script src="js/data/edit.js"></script>
+<script src="js/section.js"></script>
+<script src="js/card.js"></script>
+<script src="js/demos/angles.js"></script>
+<script src="js/demos/moves.js"></script>
+<script src="js/demos/frame.js"></script>
+<script src="js/demos/light.js"></script>
+<script src="js/demos/edit.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
