@@ -681,3 +681,112 @@ h1, h2, h3 {
     border-bottom: 2px solid var(--green);
   }
 }
+
+/* ---------- V0.3: dictionary finder & visual comparison ---------- */
+[hidden] { display: none !important; }
+.finder {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 1.2fr);
+  align-items: center;
+  gap: 9px 20px;
+  margin-bottom: 30px;
+  padding: 18px 22px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper-2);
+}
+.finder-copy label { font-size: 16px; font-weight: 700; color: var(--ink); }
+.finder-copy p { font-size: 12px; color: var(--muted); margin: 3px 0 0; }
+.finder-field { display:flex; gap: 8px; align-items: stretch; }
+.finder-field input {
+  width: 100%;
+  min-width: 0;
+  font: inherit;
+  padding: 10px 13px;
+  font-size: 13px;
+  border: 1px solid #bbac98;
+  border-radius: 9px;
+  background: #fffdf7;
+  color: var(--ink);
+}
+.finder-field input:focus-visible { outline: 2px solid var(--rust); outline-offset: 2px; }
+.finder-field button,
+.card-compare-btn,
+.compare-tray button,
+.compare-panel button {
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--green);
+  border: 1px solid #bbc7ba;
+  border-radius: 8px;
+  background: #f0f5ef;
+  padding: 7px 10px;
+  cursor: pointer;
+}
+.finder-field button:hover,
+.card-compare-btn:hover,
+.compare-tray button:hover,
+.compare-panel button:hover { border-color: var(--green); }
+.finder-field button:focus-visible,
+.card-compare-btn:focus-visible,
+.compare-tray button:focus-visible,
+.compare-panel button:focus-visible { outline: 2px solid var(--rust); outline-offset: 2px; }
+.finder-status { grid-column: 1/-1; margin: 0; font-size: 11px; color: var(--muted); min-height: 16px; }
+.card-head { flex-wrap: wrap; }
+.card-compare-btn { flex: none; margin-left: auto; padding: 5px 10px; }
+.card-compare-btn[aria-pressed="true"] { background: var(--green); color: #fff; border-color: var(--green); }
+.compare-tray {
+  position: fixed;
+  z-index: 35;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  width: min(calc(100% - 32px), 770px);
+  padding: 12px 16px;
+  border: 1px solid #9bad9d;
+  border-radius: 13px;
+  box-shadow: 0 15px 45px rgba(24,37,30,.17);
+  background: rgba(251,247,238,.96);
+  backdrop-filter: blur(14px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+.compare-tray > span { min-width: 0; font-size: 12px; color: var(--ink); }
+.compare-tray-actions { flex: none; display:flex; gap:8px; }
+.compare-tray button:disabled { cursor: not-allowed; opacity: .44; }
+.compare-tray #compare-open { color: #fff; background: var(--green); border-color: var(--green); font-weight: 600; }
+body.has-compare-tray { padding-bottom: 85px; }
+.comparison-panel {
+  scroll-margin-top: 90px;
+  margin-bottom: 30px;
+  padding: 18px 20px 21px;
+  border: 1px solid #b9c7bb;
+  border-radius: var(--radius);
+  background: #f4f8f2;
+}
+.compare-panel-head { display:flex; align-items:start; justify-content:space-between; gap:12px; margin-bottom:16px; }
+.compare-panel-head h2 { font-size: 25px; line-height: 1.25; }
+.compare-panel-head p:not(.kicker) { margin: 5px 0 0; font-size: 12px; color: var(--muted); }
+.compare-panel-head button { flex: none; }
+.compare-grid { display:grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; }
+.compare-item { min-width:0; padding:13px; border:1px solid var(--line); border-radius:11px; background:var(--paper-2); }
+.compare-item-head { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px; }
+.compare-item-head > div { display:flex; align-items:baseline; gap:8px; min-width:0; }
+.compare-item-head h3 { font-size:18px; }
+.compare-item-head button { color:var(--muted); }
+.compare-side { font-size:11px; font-weight:800; color:var(--rust); border:1px solid var(--rust); border-radius:4px; padding:0 6px; }
+.compare-item .stage { width:100%; }
+.compare-plain { font-size:12px; line-height:1.7; margin:12px 0 4px; }
+.compare-detail { color:var(--muted); font-size:11px; line-height:1.65; margin:6px 0 0; }
+@media(max-width:900px) { .finder { grid-template-columns:1fr; } }
+@media(max-width:680px) {
+  .finder { padding:15px; }
+  .compare-grid { grid-template-columns:1fr; }
+  .comparison-panel { padding:14px; }
+  .compare-panel-head h2 { font-size:22px; }
+  .compare-tray { padding:10px; }
+  .compare-tray > span { font-size:11px; }
+}
