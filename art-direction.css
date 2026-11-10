@@ -51,6 +51,7 @@ h1,h2,h3 { font-family: "Iowan Old Style", "Songti SC", "Noto Serif CJK SC", ser
   font-size: 23px;
   transform: rotate(-.5deg);
 }
+.brand-latin {font-family:ui-monospace,"SFMono-Regular",monospace;font-size:10px;font-weight:400;letter-spacing:.12em;color:#b8c4c0;white-space:nowrap;vertical-align:middle;}
 .brand-text h1 {
   font-family: "Iowan Old Style", "Songti SC", serif;
   font-size: 21px; font-weight: 600; letter-spacing: .045em;
