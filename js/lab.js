@@ -374,7 +374,13 @@ try {
  shotRenderer=makeRenderer(els.shot,true);
  orientOverview();
  setupOverviewInteraction();
- setMode('dolly');
+ const params = new URLSearchParams(window.location.search);
+ const requestedMode = params.get('mode');
+ setMode(requestedMode && MODES[requestedMode] ? requestedMode : 'dolly');
+ const requestedPreset = params.get('preset');
+ if (requestedPreset === '0' || requestedPreset === '1') {
+   setPreset(Number(requestedPreset));
+ }
  renderCaptures();
  new ResizeObserver(paint).observe(els.spatial);
  new ResizeObserver(paint).observe(els.shot);
