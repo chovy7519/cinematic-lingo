@@ -790,3 +790,11 @@ body.has-compare-tray { padding-bottom: 85px; }
   .compare-tray { padding:10px; }
   .compare-tray > span { font-size:11px; }
 }
+
+@media(max-width:480px) {
+  .compare-tray { flex-direction:column;align-items:stretch;gap:8px; }
+  .compare-tray-actions { justify-content:flex-end; }
+  .compare-tray > span { white-space:normal; }
+  body.has-compare-tray { padding-bottom:116px; }
+  .card-compare-btn { padding:5px 8px; }
+}
