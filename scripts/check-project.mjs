@@ -30,6 +30,13 @@ assert.match(readFileSync('js/lab.js','utf8'), /import \{ createStudio \} from '
 const atlas = readFileSync('js/scene.js','utf8');
 assert.match(atlas, /s-subject/, '词典主视觉丢失动画的人物锚点');
 assert.match(atlas, /@@UID@@/, 'SVG 场景缺少独立渐变 ID，多个画面会冲突');
+assert.match(atlas, /class="s-sun" cx="1850" cy="330"/,
+  '主视觉太阳偏移会破坏“匹配剪辑”的日夜画面对应');
+const editDemoSource=readFileSync('js/demos/edit.js','utf8');
+assert.match(editDemoSource, /cx="1472" cy="192" r="94"/,
+  '转场夜景的圆窗与 A 镜头太阳位置不再匹配');
+assert.equal(Math.round((1850-470)/1500*1600),1472,'镜头匹配 X 坐标错误');
+assert.equal(Math.round((330-150)/843.75*900),192,'镜头匹配 Y 坐标错误');
 
 assert.match(app, /href="lab\.html"/, '词典侧栏缺少实验室入口');
 assert.match(index, /src="js\/facets\.js"/, '词典缺少知识标签脚本');
