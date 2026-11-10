@@ -49,6 +49,20 @@
       button.setAttribute('aria-pressed', 'false');
       button.addEventListener('click', function () { toggleCompare(card.id); });
       card.querySelector('.card-head').appendChild(button);
+      // Only link terms the current camera lab can actually demonstrate.
+      var links = {
+        'moves-push': 'lab.html?mode=dolly&preset=0',
+        'moves-zoom': 'lab.html?mode=dolly&preset=1',
+        'angles-low': 'lab.html?mode=angle&preset=0',
+        'angles-high': 'lab.html?mode=angle&preset=1'
+      };
+      if (links[card.id]) {
+        var link = document.createElement('a');
+        link.className = 'card-lab-link';
+        link.href = links[card.id];
+        link.textContent = '在 3D 实验室观察这个机位 ↗';
+        card.querySelector('.card-meta').appendChild(link);
+      }
       return {card:card, id:card.id, zh:zh, index:normalize(headings), button:button};
     });
     var byId = new Map(entries.map(function(entry) { return [entry.id,entry]; }));
