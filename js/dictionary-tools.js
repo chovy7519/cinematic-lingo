@@ -113,7 +113,15 @@
       });
     }
 
+    function stopComparedAnimations() {
+      columns.querySelectorAll('.stage').forEach(function(stage) {
+        if (stage._raf) cancelAnimationFrame(stage._raf);
+        if (stage._timer) clearTimeout(stage._timer);
+      });
+    }
+
     function renderPanel() {
+      stopComparedAnimations();
       if (!compareExpanded || selected.length !== 2) {
         panel.hidden = true;
         columns.replaceChildren();
@@ -167,7 +175,7 @@
       });
       if (!window.matchMedia || !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         requestAnimationFrame(function(){
-          stages.forEach(function(stage) { window.FilmCards.play(stage); });
+          stages.forEach(function(stage) { if (stage.isConnected) window.FilmCards.play(stage); });
         });
       }
     }
