@@ -97,6 +97,10 @@ function resetOverview() {
 }
 const helper = new THREE.CameraHelper(camera);
 helper.setColors(0xd5a27e,0x91aaab,0x85999a,0x607b83,0xa2b8b6);
+helper.material.transparent=true;
+helper.material.opacity=.42;
+helper.material.depthTest=false;
+helper.material.toneMapped=false;
 helper.layers.set(1);  // 不让取景画面看到自己的机位线框
 scene.add(helper);
 const cameraBody = new THREE.Mesh(new THREE.BoxGeometry(.31,.23,.47),mat('#b88b6b',.52,.35));
