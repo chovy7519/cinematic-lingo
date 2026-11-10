@@ -122,8 +122,8 @@
         '<rect x="188" y="42" width="76" height="62" fill="none" stroke="#b4522f" stroke-width="2"/>' +
         '<path d="M188,74 L264,74" stroke="#b4522f" stroke-width="1" stroke-dasharray="3 3" opacity=".55"/>' +
         '</g>';
-      svg += '<text class="d-label" x="24" y="34">相机水平 · 画面倾斜</text>';
-      svg += person(210, g, 1) + camera(56, 86, g) + sight(80, 86, 200, 86);
+      svg += '<text class="d-label" x="24" y="34">摄影机绕光轴倾斜</text>';
+      svg += person(210, g, 1) + '<g transform="rotate(-14 56 86)">' + camera(56, 86, g) + '</g>' + sight(80, 86, 200, 86);
 
     } else if (kind === 'ots') {
       svg += '<text class="d-label" x="24" y="34">越过前景肩膀</text>';
