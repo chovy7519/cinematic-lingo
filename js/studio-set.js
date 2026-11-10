@@ -1,3 +1,5 @@
+import { createCharacter } from './character-maquette.js';
+
 /*
  * STUDIO / 01 — Architectural cinematography test set.
  *
@@ -118,86 +120,10 @@ export function createStudio(THREE) {
   box(.20,.055,.23,-1.32,3.17,1.08,darkStone);
   box(.14,1.08,.16,1.72,.55,.66,mat('#53666a',.94));
 
-  // Editorial human scale reference. A continuous tailored silhouette and
-  // subdued facial detail avoid the toy-like boxes of the first whitebox.
-  const figure=new THREE.Group();
-  function attach(geometry,material,x,y,z){
-    const mesh=new THREE.Mesh(geometry,material);
-    mesh.position.set(x,y,z);
-    mesh.castShadow=true;mesh.receiveShadow=true;
-    figure.add(mesh);return mesh;
-  }
-  // The coat is one lathed and gently tapered sculptural volume, not stacked
-  // boxes. Elliptical depth makes the body read more like human anatomy.
-  const profile=[
-    [0,.71],[.255,.71],[.315,.77],[.312,.92],
-    [.278,1.04],[.285,1.29],[.332,1.44],
-    [.31,1.49],[.215,1.56],[.11,1.60],[0,1.60]
-  ].map(p=>new THREE.Vector2(p[0],p[1]));
-  const coatBody=attach(new THREE.LatheGeometry(profile,28),coat,0,0,0);
-  coatBody.scale.z=.77;
-  const shoulders=attach(new THREE.SphereGeometry(.335,28,18),coat,0,1.45,-.025);
-  shoulders.scale.set(1.17,.42,.60);
-  attach(new THREE.CylinderGeometry(.071,.081,.115,18),skin,0,1.637,.024);
-  // Jacket has quiet lapels and a narrow shirt; no oversized grey ribbons.
-  function panel(points,material,z) {
-    const shape=new THREE.Shape();
-    shape.moveTo(points[0][0],points[0][1]);
-    for(let i=1;i<points.length;i++)shape.lineTo(points[i][0],points[i][1]);
-    shape.closePath();
-    const mesh=attach(new THREE.ShapeGeometry(shape),material,0,0,z);
-    return mesh;
-  }
-  const seam=mat('#2d4044',.97);
-  seam.side=THREE.DoubleSide;
-  const shirtMat=mat('#34484a',.95);
-  shirtMat.side=THREE.DoubleSide;
-  panel([[-.065,1.55],[.067,1.55],[.047,1.26],[-.05,1.26]],shirtMat,.258);
-  panel([[-.232,1.49],[-.058,1.52],[-.018,1.34],[-.09,1.30]],seam,.27);
-  panel([[.232,1.49],[.058,1.52],[.018,1.34],[.09,1.30]],seam,.27);
-  const buttonMat=mat('#8b7867',.67,.20);
-  for(const y of [1.20,1.04]){
-    const button=attach(new THREE.SphereGeometry(.013,10,8),buttonMat,.085,y,.247);
-    button.scale.z=.35;
-  }
-
-  // An intentional architectural scale maquette, not a toy or fake human.
-  // Expressionless porcelain makes changes in framing / angle the readable variable.
-  const head=new THREE.Group();
-  head.position.set(-.012,1.81,.018);
-  head.rotation.y=.10;
-  head.rotation.x=-.035;
-  figure.add(head);
-  function headPart(geometry,material,x,y,z){
-    const mesh=new THREE.Mesh(geometry,material);
-    mesh.position.set(x,y,z);
-    mesh.castShadow=true;mesh.receiveShadow=true;
-    head.add(mesh);
-    return mesh;
-  }
-  const porcelain=mat('#b7b0a5',.97);
-  const face=headPart(new THREE.SphereGeometry(.20,40,30),porcelain,0,0,0);
-  face.scale.set(.82,1.13,.87);
-  // A subdued nose plane catches light without any cartoonish facial decals.
-  const ridge=headPart(new THREE.SphereGeometry(.018,16,12),porcelain,.01,-.041,.157);
-  ridge.scale.set(.48,1.0,.42);
-
-  // Slender, continuous coat sleeves and tailored straight trousers:
-  // no disconnected white mannequin hands, cuff rings or round toy shoes.
-  for(const side of [-1,1]){
-    const sleeve=attach(new THREE.CylinderGeometry(.097,.072,.65,20),coat,side*.357,1.145,-.008);
-    sleeve.rotation.z=side*.135;
-    sleeve.scale.z=.77;
-    const sleeveEnd=attach(new THREE.SphereGeometry(.071,16,10),coat,side*.399,.828,-.003);
-    sleeveEnd.scale.set(1,.36,.8);
-    const leg=attach(new THREE.CylinderGeometry(.126,.091,.77,20),coat,side*.154,.403,.005);
-    leg.scale.z=.80;
-    const foot=attach(new THREE.BoxGeometry(.178,.102,.29),leather,side*.154,.061,.087);
-    foot.rotation.y=side*.045;
-    foot.castShadow=true;
-  }
-  figure.position.y=.035;
-  scene.add(figure);
+  // Character art is independent of the architectural scene and camera maths.
+  // The smooth sculpt may later be replaced with an authored Blender GLB
+  // without touching the educational camera/framing experiments.
+  createCharacter(THREE,scene);
 
   // Camera-agnostic key/fill/rim: deliberate chiaroscuro and material separation.
   scene.add(new THREE.HemisphereLight(0xb5cdd9,0x354043,1.08));
