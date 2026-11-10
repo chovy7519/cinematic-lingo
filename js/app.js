@@ -30,6 +30,8 @@
           '<span class="rail-badge">待补</span></span>';
       }
     });
+    html += '<a class="rail-item rail-lab-link" href="lab.html">' +
+      '<span class="rail-no">↗</span><span>3D 摄影机实验室</span></a>';
     html += '</nav>';
     nav.innerHTML = html;
   }
