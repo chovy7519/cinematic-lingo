@@ -118,8 +118,8 @@ export function createStudio(THREE) {
   box(.20,.055,.23,-1.32,3.17,1.08,darkStone);
   box(.14,1.08,.16,1.72,.55,.66,mat('#53666a',.94));
 
-  // Adult in a contemporary tailored coat. Sculptural rather than photoreal:
-  // avoids cartoon head/limb proportions while retaining a readable silhouette.
+  // Editorial human scale reference. A continuous tailored silhouette and
+  // subdued facial detail avoid the toy-like boxes of the first whitebox.
   const figure=new THREE.Group();
   function attach(geometry,material,x,y,z){
     const mesh=new THREE.Mesh(geometry,material);
@@ -127,45 +127,89 @@ export function createStudio(THREE) {
     mesh.castShadow=true;mesh.receiveShadow=true;
     figure.add(mesh);return mesh;
   }
-  const torso=attach(new THREE.CylinderGeometry(.30,.36,.88,16),coat,0,1.16,0);
-  torso.scale.z=.70;
-  const shoulder=attach(new THREE.SphereGeometry(.33,20,14),coat,0,1.47,-.02);
-  shoulder.scale.set(1.17,.55,.59);
-  const hem=attach(new THREE.CylinderGeometry(.33,.39,.42,14),coat,0,.75,-.025);
-  hem.scale.z=.73;
-  attach(new THREE.CylinderGeometry(.075,.088,.13,12),skin,0,1.62,.02);
+  // The coat is one lathed and gently tapered sculptural volume, not stacked
+  // boxes. Elliptical depth makes the body read more like human anatomy.
+  const profile=[
+    [0,.71],[.255,.71],[.315,.77],[.312,.92],
+    [.278,1.04],[.285,1.29],[.332,1.44],
+    [.31,1.49],[.215,1.56],[.11,1.60],[0,1.60]
+  ].map(p=>new THREE.Vector2(p[0],p[1]));
+  const coatBody=attach(new THREE.LatheGeometry(profile,28),coat,0,0,0);
+  coatBody.scale.z=.77;
+  const shoulders=attach(new THREE.SphereGeometry(.335,28,18),coat,0,1.45,-.025);
+  shoulders.scale.set(1.17,.42,.60);
+  attach(new THREE.CylinderGeometry(.071,.081,.115,18),skin,0,1.637,.024);
+  // Jacket has quiet lapels and a narrow shirt; no oversized grey ribbons.
+  function panel(points,material,z) {
+    const shape=new THREE.Shape();
+    shape.moveTo(points[0][0],points[0][1]);
+    for(let i=1;i<points.length;i++)shape.lineTo(points[i][0],points[i][1]);
+    shape.closePath();
+    const mesh=attach(new THREE.ShapeGeometry(shape),material,0,0,z);
+    return mesh;
+  }
+  const seam=mat('#425258',.92);
+  seam.side=THREE.DoubleSide;
+  const shirtMat=mat('#a3aaa4',.92);
+  shirtMat.side=THREE.DoubleSide;
+  panel([[-.065,1.55],[.067,1.55],[.047,1.26],[-.05,1.26]],shirtMat,.258);
+  panel([[-.275,1.48],[-.073,1.54],[-.017,1.32],[-.103,1.24]],seam,.27);
+  panel([[.276,1.48],[.076,1.54],[.021,1.32],[.101,1.24]],seam,.27);
+  const buttonMat=mat('#8b7867',.67,.20);
+  for(const y of [1.20,1.04]){
+    const button=attach(new THREE.SphereGeometry(.013,10,8),buttonMat,.085,y,.247);
+    button.scale.z=.35;
+  }
+
   const head=new THREE.Group();
-  head.position.set(-.026,1.80,.016);
-  head.rotation.y=.10;
+  head.position.set(-.012,1.80,.017);
+  head.rotation.y=.11;
+  head.rotation.x=-.04;
   figure.add(head);
   function facePart(geometry,material,x,y,z){
-    const mesh=new THREE.Mesh(geometry,material);mesh.position.set(x,y,z);
-    mesh.castShadow=true;head.add(mesh);return mesh;
+    const mesh=new THREE.Mesh(geometry,material);
+    mesh.position.set(x,y,z);mesh.castShadow=true;head.add(mesh);return mesh;
   }
-  facePart(new THREE.SphereGeometry(.224,32,24),skin,0,0,0).scale.y=1.13;
-  facePart(new THREE.SphereGeometry(.234,32,20,0,Math.PI*2,0,Math.PI*.54),hair,0,.025,-.006).scale.y=1.07;
+  const face=facePart(new THREE.SphereGeometry(.210,36,28),skin,0,0,0);
+  face.scale.set(.91,1.17,.96);
+  // A soft sculpted hair volume follows the skull rather than a flat black cap.
+  const hairTexture=mat('#2a302f',.92);
+  const crown=facePart(new THREE.SphereGeometry(.218,36,22,0,Math.PI*2,0,Math.PI*.43),hairTexture,0,.035,-.013);
+  crown.scale.set(.94,1.14,.99);
+  const backHair=facePart(new THREE.SphereGeometry(.190,26,20),hairTexture,0,-.012,-.13);
+  backHair.scale.set(.91,1.12,.53);
   for(const side of [-1,1]){
-    facePart(new THREE.SphereGeometry(.041,12,10),skin,side*.221,-.035,.005);
-    const eye=facePart(new THREE.SphereGeometry(.012,12,8),mat('#463f3b',.96),side*.083,.02,.208);
-    eye.scale.y=.72;
+    facePart(new THREE.SphereGeometry(.025,12,8),skin,side*.190,-.044,-.013);
   }
-  facePart(new THREE.SphereGeometry(.034,12,8),skin,.01,-.03,.224).scale.set(.65,1.1,.8);
-  facePart(new THREE.BoxGeometry(.058,.006,.006),mat('#896c5f',.9),.009,-.119,.207);
-  // Shirt and asymmetric jacket lapels.
-  attach(new THREE.BoxGeometry(.11,.38,.023),mat('#8a9290',.91),0,1.35,.216);
-  const lapelA=attach(new THREE.BoxGeometry(.155,.45,.035),collar,-.125,1.39,.222);
-  lapelA.rotation.z=-.28;
-  const lapelB=attach(new THREE.BoxGeometry(.155,.45,.035),collar,.125,1.39,.222);
-  lapelB.rotation.z=.28;
+  // Contours, not emoji dots. Eyelids and mouth are subtle tube curves.
+  const facialInk=mat('#564a43',.94);
+  function contour(points,radius,material){
+    const curve=new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(...p)));
+    const mesh=new THREE.Mesh(new THREE.TubeGeometry(curve,12,radius,5,false),material);
+    head.add(mesh);
+  }
   for(const side of [-1,1]){
-    const arm=attach(new THREE.CapsuleGeometry(.10,.58,6,12),coat,side*.401,1.17,-.008);
-    arm.rotation.z=side*.10;
-    attach(new THREE.SphereGeometry(.079,14,10),skin,side*.423,.72,.01);
-    const leg=attach(new THREE.CylinderGeometry(.125,.107,.70,12),coat,side*.171,.40,0);
-    leg.scale.z=.9;
-    attach(new THREE.BoxGeometry(.255,.15,.37),leather,side*.175,.08,.071);
+    contour([[side*.054,.020,.193],[side*.080,.024,.188],[side*.103,.017,.182]],.0036,facialInk);
+    contour([[side*.058,.061,.188],[side*.084,.066,.181],[side*.106,.061,.176]],.0026,hairTexture);
   }
-  figure.position.y=.054;
+  const nose=facePart(new THREE.SphereGeometry(.026,14,12),skin,.009,-.035,.198);
+  nose.scale.set(.56,1.26,.70);
+  contour([[-.029,-.119,.181],[.005,-.123,.187],[.038,-.116,.18]],.0028,mat('#98796b',.94));
+
+  // Relaxed asymmetric sleeves with tapered cuffs and integrated hands.
+  for(const side of [-1,1]){
+    const upper=attach(new THREE.CapsuleGeometry(.086,.45,7,12),coat,side*.363,1.23,-.016);
+    upper.rotation.z=side*.13;
+    const cuff=attach(new THREE.CylinderGeometry(.079,.075,.11,14),coat,side*.416,.81,.006);
+    cuff.rotation.z=side*.12;
+    const hand=attach(new THREE.CapsuleGeometry(.051,.062,4,10),skin,side*.429,.687,.008);
+    hand.rotation.z=side*.10;
+    const leg=attach(new THREE.CylinderGeometry(.110,.091,.70,16),coat,side*.162,.40,0);
+    leg.scale.z=.82;
+    const shoe=attach(new THREE.SphereGeometry(.127,20,12),leather,side*.163,.105,.074);
+    shoe.scale.set(1,.55,1.37);
+  }
+  figure.position.y=.035;
   scene.add(figure);
 
   // Camera-agnostic key/fill/rim: deliberate chiaroscuro and material separation.
