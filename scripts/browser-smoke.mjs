@@ -15,6 +15,15 @@ try {
   await page.waitForSelector('.card-compare-btn');
   assert.equal(await page.locator('.card').count(), 46, 'dictionary should render 46 terms');
   await page.screenshot({path:'/tmp/cinematic-art-dictionary-v04.png'});
+  // Stable close-up review: render the exact target viewBox without autoplay.
+  const closeup = page.locator('#shot-cu .stage');
+  await closeup.evaluate(stage => {
+    stage.setAttribute('data-played', '1');
+    const crop = JSON.parse(stage.getAttribute('data-to'));
+    stage.querySelector('.scene-holder svg')
+      .setAttribute('viewBox', [crop.x,crop.y,crop.w,crop.h].join(' '));
+  });
+  await closeup.screenshot({path:'/tmp/cinematic-art-closeup-v04.png'});
 
   const search = page.locator('#term-search');
   await search.fill('POV');
