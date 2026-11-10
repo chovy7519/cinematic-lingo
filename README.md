@@ -28,7 +28,7 @@
 ## 摄影机实验室（MVP）
 
 打开 `lab.html`，体验左侧空间视图（相机、人物与前后景）和右侧实时取景：
-- 推镜 vs 变焦：主体取景尺寸相近，远近景的投影关系不同。
+- 推镜 vs 变焦：从同一机位与焦距分别播放两种运动；最终主体取景尺寸相近，远近景的投影关系不同。
 - 高机位 vs 低机位：比较俯拍和仰拍。
 - 广角近拍 vs 长焦远拍：认识“焦距改变视角，机位决定透视”。
 
@@ -50,7 +50,7 @@ npx serve . -l 5173
 python3 -m http.server 5173
 ```
 
-注意：实验室从 jsDelivr 加载固定版本的 Three.js，首次访问需要联网；建议不要直接通过 `file://` 打开。词典其余 SVG 资源在仓库内，无视频素材依赖。
+注意：实验室从 jsDelivr 加载固定版本的 Three.js，需要网络或浏览器缓存；加载失败时会提示检查网络并刷新。建议不要直接通过 `file://` 打开。词典其余 SVG 资源在仓库内，无视频素材依赖。
 
 ## 工程结构
 - `index.html`：词典首页
@@ -58,7 +58,7 @@ python3 -m http.server 5173
 - `js/data/`：术语与教学文案
 - `js/demos/`：按分类实现的 SVG 动画
 - `js/app.js`、`js/card.js`、`js/section.js`：页面装配、卡片与组件渲染
-- `lab.html`、`js/lab.js`：独立三维摄影机实验室
+- `lab.html`、`js/lab-loader.js`、`js/lab.js`：独立三维摄影机实验室及加载错误提示
 - `docs/CONTENT_AUDIT.md`：审校记录与科学边界
 - `scripts/check-project.mjs`：静态结构校验
 
