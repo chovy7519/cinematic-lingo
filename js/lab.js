@@ -4,11 +4,11 @@ import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.m
 const MODES = {
   dolly: {
     title: '真实推进与光学变焦，为什么画面不一样？',
-    guide: '先按 A，再按 B。A 把摄影机向主体推进；B 保持更远机位并增加焦距。两种方法使人物的取景大小接近，却改变了前后景的相对比例。',
+    guide: '从同一机位和焦距出发，分别播放 A 与 B：A 移动摄影机，B 固定机位并改变焦距。比较运动过程，以及结束时前后景的相对大小。',
     fact: '同一机位只变焦，相机与物体的投影中心不变，透视关系不变；推进相机则会产生视差与遮挡变化。不要把 SVG 画面放大当作真实推轨的完整模拟。',
     presets: [
-      { label: 'A · 推镜：靠近人物', distance: 3, focal: 50, height: 1.6 },
-      { label: 'B · 变焦：保持远处', distance: 6, focal: 100, height: 1.6 }
+      { label: 'A · 播放推镜', distance: 3, focal: 50, height: 1.6 },
+      { label: 'B · 播放变焦', distance: 6, focal: 100, height: 1.6 }
     ]
   },
   angle: {
@@ -30,7 +30,13 @@ const MODES = {
     ]
   }
 };
-const state = { mode: 'dolly', distance: 3, focal: 50, height: 1.6, activePreset: 0 };
+const dollyStart = { distance: 6, focal: 50, height: 1.6 };
+const state = { mode: 'dolly', ...dollyStart, activePreset: null };
+let animationId = null;
+function stopAnimation() {
+ if (animationId !== null) cancelAnimationFrame(animationId);
+ animationId = null;
+}
 const els = {
   spatial: document.getElementById('lab-spatial'),
   shot: document.getElementById('lab-shot'),
@@ -160,12 +166,31 @@ function updateUI() {
 }
 function update() {updateUI();paint();}
 function setPreset(index) {
- Object.assign(state,MODES[state.mode].presets[index]);
+ stopAnimation();
+ const preset = MODES[state.mode].presets[index];
  state.activePreset=index;
+ if (state.mode === 'dolly') {
+   Object.assign(state,dollyStart);
+   update();
+   let startTime;
+   function animate(time) {
+     if (startTime === undefined) startTime = time;
+     const progress = Math.min((time-startTime)/1800,1);
+     state.distance = dollyStart.distance + (preset.distance-dollyStart.distance)*progress;
+     state.focal = Math.round(dollyStart.focal + (preset.focal-dollyStart.focal)*progress);
+     update();
+     if (progress < 1) animationId=requestAnimationFrame(animate);
+     else animationId=null;
+   }
+   animationId=requestAnimationFrame(animate);
+   return;
+ }
+ Object.assign(state,preset);
  update();
 }
 function setMode(mode) {
  if(!MODES[mode]) return;
+ stopAnimation();
  state.mode=mode;
  els.presets.replaceChildren();
  MODES[mode].presets.forEach((preset,i)=>{
@@ -176,19 +201,31 @@ function setMode(mode) {
    btn.addEventListener('click',()=>setPreset(i));
    els.presets.appendChild(btn);
  });
- setPreset(0);
+ if (mode === 'dolly') {
+   Object.assign(state,dollyStart);
+   state.activePreset=null;
+   update();
+ } else setPreset(0);
 }
 for(const btn of document.querySelectorAll('.mode-btn')){
  btn.addEventListener('click',()=>setMode(btn.dataset.mode));
 }
 for(const key of ['distance','focal','height']) {
  els[key].addEventListener('input',()=>{
+   stopAnimation();
    state[key]=Number(els[key].value);
    state.activePreset=null;
    update();
  });
 }
-document.getElementById('lab-reset').addEventListener('click',()=>setPreset(0));
+document.getElementById('lab-reset').addEventListener('click',()=>{
+ if (state.mode === 'dolly') {
+   stopAnimation();
+   Object.assign(state,dollyStart);
+   state.activePreset=null;
+   update();
+ } else setPreset(0);
+});
 
 try {
  spaceRenderer=makeRenderer(els.spatial);
