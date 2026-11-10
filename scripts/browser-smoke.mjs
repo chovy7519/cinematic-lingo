@@ -14,6 +14,7 @@ try {
   await page.goto(base, { waitUntil:'domcontentloaded' });
   await page.waitForSelector('.card-compare-btn');
   assert.equal(await page.locator('.card').count(), 46, 'dictionary should render 46 terms');
+  await page.screenshot({path:'/tmp/cinematic-art-dictionary-v04.png'});
 
   const search = page.locator('#term-search');
   await search.fill('POV');
@@ -47,6 +48,8 @@ try {
   // Verify dictionary-to-lab deep linking and real WebGL rendering.
   await page.goto(base + 'lab.html?mode=angle&preset=1', {waitUntil:'domcontentloaded'});
   await page.waitForSelector('#lab-shot canvas', {timeout:30000});
+  await page.screenshot({path:'/tmp/cinematic-art-lab-v04.png'});
+  await page.locator('#lab-shot canvas').screenshot({path:'/tmp/cinematic-art-shot-v04.png'});
   assert.equal(await page.locator('[data-mode="angle"]').getAttribute('aria-pressed'), 'true');
   const spatial = page.locator('#lab-spatial canvas');
   const shot = page.locator('#lab-shot canvas');
