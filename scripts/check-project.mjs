@@ -14,13 +14,23 @@ function requireFile(path) {
   assert.ok(existsSync(path), '缺失文件：' + path);
 }
 for (const path of [
-  'styles.css', 'favicon.svg', 'js/facets.js', 'js/dictionary-tools.js',
+  'styles.css', 'art-direction.css', 'favicon.svg', 'js/facets.js', 'js/dictionary-tools.js', 'js/studio-set.js', 'docs/V0.4_ART_DIRECTION.md',
   'js/lab.js', 'js/lab-loader.js', 'docs/CONTENT_AUDIT.md',
   'docs/V0.2_CONTENT_REVIEW.md', 'CHANGELOG.md'
 ]) requireFile(path);
 
 // Only two user-facing modules: dictionary and camera lab. No quiz system.
 assert.match(index, /href="lab\.html"/, '词典首页缺少实验室入口');
+assert.match(index, /href="art-direction\.css"/, '词典未加载摄影美术体系');
+assert.match(lab, /href="art-direction\.css"/, '实验室未加载摄影美术体系');
+const setSource = readFileSync('js/studio-set.js','utf8');
+assert.match(setSource, /export function createStudio\(THREE\)/,'摄影棚几何模块没有导出');
+assert.match(readFileSync('js/lab.js','utf8'), /import \{ createStudio \} from '\.\/studio-set\.js'/,
+  '摄影机没有加载独立美术场景');
+const atlas = readFileSync('js/scene.js','utf8');
+assert.match(atlas, /s-subject/, '词典主视觉丢失动画的人物锚点');
+assert.match(atlas, /@@UID@@/, 'SVG 场景缺少独立渐变 ID，多个画面会冲突');
+
 assert.match(app, /href="lab\.html"/, '词典侧栏缺少实验室入口');
 assert.match(index, /src="js\/facets\.js"/, '词典缺少知识标签脚本');
 assert.match(index, /id="term-search"/, '缺少术语查找输入框');
