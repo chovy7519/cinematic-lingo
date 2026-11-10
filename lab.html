@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>摄影机实验室 · 电影镜头语言</title>
+<meta name="description" content="在三维空间中实时比较推镜、变焦、俯拍、仰拍与焦距对画面的影响。">
+<link rel="stylesheet" href="styles.css">
+<style>
+body{background:#f4efe4;color:#26211c}
+.lab-top{max-width:1280px;margin:auto;padding:20px 28px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.lab-back{font-size:14px;color:#2f4a43;text-decoration:none;border-bottom:1px solid #2f4a43}
+.lab-intro{max-width:1280px;margin:0 auto;padding:12px 28px 22px}
+.lab-kicker{color:#b4522f;font-size:12px;letter-spacing:.13em;font-weight:700}
+.lab-intro h1{font-size:clamp(28px,4vw,40px);margin:8px 0}
+.lab-intro p{max-width:850px;color:#6f6555;margin:0}
+.lab-layout{max-width:1280px;margin:auto;padding:0 28px 70px;display:grid;grid-template-columns:250px minmax(0,1fr);gap:20px;align-items:start}
+.lab-control{border:1px solid #d9cfbc;border-radius:16px;padding:18px;background:#fbf7ee;position:sticky;top:16px}
+.lab-control h2{font-size:19px;margin:0 0 12px}
+.lab-control h3{font-size:14px;margin:18px 0 10px}
+.lab-modes{display:grid;gap:7px}
+.mode-btn,.preset-btn,.reset-btn{font:inherit;text-align:left;border:1px solid #d9cfbc;border-radius:10px;background:#fff9ef;padding:9px 11px;cursor:pointer;color:#26211c}
+.mode-btn[aria-pressed="true"]{background:#2f4a43;border-color:#2f4a43;color:#fff}
+.preset-btn:focus-visible,.mode-btn:focus-visible,.reset-btn:focus-visible{outline:3px solid #b4522f;outline-offset:2px}
+.lab-presets{display:grid;gap:7px}
+.preset-btn[data-selected="true"]{border-color:#b4522f;box-shadow:inset 3px 0 #b4522f}
+.lab-range{display:block;margin:14px 0}
+.lab-range span{display:flex;justify-content:space-between;font-size:13px;gap:10px}
+.lab-range output{font-variant-numeric:tabular-nums;font-weight:700}
+.lab-range input{width:100%;accent-color:#2f4a43;cursor:pointer}
+.reset-btn{width:100%;text-align:center;margin-top:12px}
+.lab-workspace{min-width:0}
+.lab-guide{border:1px solid #d9cfbc;background:#fbf7ee;border-radius:14px;padding:14px 17px;margin-bottom:15px}
+.lab-guide strong{display:block;margin-bottom:4px}
+.lab-guide p{font-size:13px;margin:0;color:#6f6555}
+.lab-views{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.lab-viewport{min-width:0;border:1px solid #d9cfbc;border-radius:15px;overflow:hidden;background:#e4e8e4}
+.lab-view-head{display:flex;justify-content:space-between;align-items:center;padding:11px 13px;background:#fbf7ee;border-bottom:1px solid #d9cfbc;gap:8px}
+.lab-view-head strong{font-size:14px}
+.lab-view-head span{font-size:11px;color:#6f6555}
+.lab-canvas{height:clamp(280px,32vw,450px);width:100%;position:relative;overflow:hidden}
+.lab-canvas canvas{display:block;width:100%;height:100%}
+.lab-caption{font-size:12px;color:#625d51;padding:9px 13px;background:#fbf7ee;min-height:57px}
+.lab-facts{margin-top:14px;border-left:3px solid #b4522f;padding:8px 16px;background:#fbf7ee;font-size:14px}
+.lab-facts strong{font-weight:700}
+.lab-facts p{margin:5px 0 0;color:#625d51}
+.lab-foot{margin-top:14px;font-size:12px;color:#6f6555;line-height:1.7}
+.lab-error{padding:20px;background:#fff1eb;color:#8f301b;border-radius:8px}
+@media(max-width:920px){.lab-layout{grid-template-columns:1fr}.lab-control{position:static}.lab-modes{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:650px){.lab-views{grid-template-columns:1fr}.lab-top,.lab-intro{padding-left:16px;padding-right:16px}.lab-layout{padding-left:16px;padding-right:16px}.lab-modes{grid-template-columns:1fr}.lab-view-head{flex-wrap:wrap}}
+</style>
+</head>
+<body>
+<header class="lab-top"><a class="lab-back" href="index.html">← 返回电影语言词典</a><span style="font-size:12px;color:#6f6555">LEARNING LAB · 实验版本</span></header>
+<section class="lab-intro">
+<div class="lab-kicker">INTERACTIVE CINEMATOGRAPHY</div>
+<h1>摄影机实验室</h1>
+<p>左边看相机怎样摆放，右边看真实三维取景。使用两组预设进行比较，再拖动参数观察空间、构图与透视如何改变。这里演示的是摄影原理，不代表情绪表达有固定答案。</p>
+</section>
+<main class="lab-layout">
+<aside class="lab-control">
+<h2>选择一个实验</h2>
+<div class="lab-modes" role="group" aria-label="实验类型">
+<button class="mode-btn" data-mode="dolly" aria-pressed="true">01 · 推镜 vs 变焦</button>
+<button class="mode-btn" data-mode="angle" aria-pressed="false">02 · 俯拍 vs 仰拍</button>
+<button class="mode-btn" data-mode="lens" aria-pressed="false">03 · 焦距与透视</button>
+</div>
+<h3>对比预设</h3>
+<div class="lab-presets" id="lab-presets"></div>
+<h3>手动调整</h3>
+<label class="lab-range"><span>相机距主体 <output id="distance-value" for="distance">6.0 m</output></span><input id="distance" type="range" min="2" max="12" step="0.1" value="6"></label>
+<label class="lab-range"><span>焦距 <output id="focal-value" for="focal">50 mm</output></span><input id="focal" type="range" min="18" max="100" step="1" value="50"></label>
+<label class="lab-range"><span>机位高度 <output id="height-value" for="height">1.6 m</output></span><input id="height" type="range" min="0.5" max="4" step="0.1" value="1.6"></label>
+<button class="reset-btn" id="lab-reset">↺ 恢复当前实验默认值</button>
+</aside>
+<section class="lab-workspace" aria-label="摄影机实验视图">
+<div class="lab-guide"><strong id="lab-guide-title">理解真实推进与光学变焦</strong><p id="lab-guide-body"></p></div>
+<div class="lab-views">
+<div class="lab-viewport">
+<div class="lab-view-head"><strong>空间视图</strong><span>相机、人物、前景与背景</span></div>
+<div class="lab-canvas" id="lab-spatial" aria-label="三维场景与摄影机位置"></div>
+<div class="lab-caption">蓝色锥形线框是相机视锥。移动相机时，主体与远近物体的空间关系会改变。</div>
+</div>
+<div class="lab-viewport">
+<div class="lab-view-head"><strong>摄影机取景</strong><span id="lab-shot-label">50 mm · 6.0 m</span></div>
+<div class="lab-canvas" id="lab-shot" aria-label="实时摄影机取景画面"></div>
+<div class="lab-caption">试着观察前景柱、人物和远处建筑之间的相对大小及遮挡变化。</div>
+</div>
+</div>
+<div class="lab-facts"><strong id="lab-fact-title">关键观察</strong><p id="lab-fact"></p></div>
+<p class="lab-foot">教学约定：焦距以 36×24 mm 全画幅传感器的 24 mm 高度计算垂直视角；场景为简化的三维几何模型。透视主要由摄影机与物体的相对位置决定。镜头光学畸变、景深与真实复杂照明暂不模拟。首次打开需要联网加载 Three.js 模块，建议通过本地 HTTP 服务运行。</p>
+</section>
+</main>
+<script type="module" src="js/lab.js"></script>
+</body>
+</html>
