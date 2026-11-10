@@ -16,11 +16,10 @@
     var nav = document.getElementById('rail-nav');
     if (!nav) return;
 
-    var html = '<p class="rail-label">目录</p><nav class="rail-nav">' +
-      '<a class="rail-item is-active" href="#learning"><span class="rail-no">00</span><span>概念辨析</span><span class="rail-count">4</span></a>';
+    var html = '<p class="rail-label">目录</p><nav class="rail-nav">';
     SECTIONS.forEach(function (sec) {
       if (sec.ready) {
-        html += '<a class="rail-item" href="' + sec.href + '">' +
+        html += '<a class="rail-item' + (sec.id === 'shots' ? ' is-active' : '') + '" href="' + sec.href + '">' +
           '<span class="rail-no">' + sec.no + '</span>' +
           '<span>' + sec.zh + '</span>' +
           '<span class="rail-count">' + sec.count + '</span></a>';
@@ -150,7 +149,7 @@
 
     // 目录激活跟随章节位置，避免停留在旧的“景别”初始状态。
     var navLinks = Array.from(document.querySelectorAll('.rail-item[href^="#"]'));
-    var chapters = Array.from(document.querySelectorAll('#learning, .section'));
+    var chapters = Array.from(document.querySelectorAll('.section'));
     function updateNav() {
       var current = chapters[0];
       for (var i = 0; i < chapters.length; i++) {
@@ -184,7 +183,6 @@
   function boot() {
     renderRail();
     renderFuture();
-    window.FilmLearning.render(document.getElementById('learning'));
 
     var items = window.SHOT_DATA.items;
     renderStrip(items);
