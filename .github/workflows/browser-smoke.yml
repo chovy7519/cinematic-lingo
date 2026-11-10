@@ -27,4 +27,7 @@ jobs:
           path: |
             /tmp/cinematic-dictionary-v03.png
             /tmp/cinematic-lab-v03.png
+            /tmp/cinematic-art-dictionary-v04.png
+            /tmp/cinematic-art-lab-v04.png
+            /tmp/cinematic-art-shot-v04.png
           if-no-files-found: ignore
