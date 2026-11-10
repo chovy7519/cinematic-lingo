@@ -153,9 +153,11 @@
     var navLinks = Array.from(document.querySelectorAll('.rail-item[href^="#"]'));
     var chapters = Array.from(document.querySelectorAll('.section'));
     function updateNav() {
-      var current = chapters[0];
-      for (var i = 0; i < chapters.length; i++) {
-        if (chapters[i].getBoundingClientRect().top <= window.innerHeight * 0.3) current = chapters[i];
+      var visibleChapters = chapters.filter(function(chapter) { return !chapter.hidden; });
+      var current = visibleChapters[0];
+      if (!current) return;
+      for (var i = 0; i < visibleChapters.length; i++) {
+        if (visibleChapters[i].getBoundingClientRect().top <= window.innerHeight * 0.3) current = visibleChapters[i];
       }
       navLinks.forEach(function(link){
         link.classList.toggle('is-active', link.getAttribute('href') === '#' + current.id);
@@ -194,6 +196,7 @@
     renderMore();
 
     wire();
+    window.FilmDictionaryTools.init();
   }
 
   if (document.readyState === 'loading') {

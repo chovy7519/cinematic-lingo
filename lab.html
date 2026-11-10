@@ -49,6 +49,29 @@ body{background:#f4efe4;color:#26211c}
 .lab-error{padding:20px;background:#fff1eb;color:#8f301b;border-radius:8px}
 @media(max-width:920px){.lab-layout{grid-template-columns:1fr}.lab-control{position:static}.lab-modes{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:650px){.lab-views{grid-template-columns:1fr}.lab-top,.lab-intro{padding-left:16px;padding-right:16px}.lab-layout{padding-left:16px;padding-right:16px}.lab-modes{grid-template-columns:1fr}.lab-view-head{flex-wrap:wrap}}
+
+.lab-view-tools{display:flex;align-items:center;flex-wrap:wrap;justify-content:flex-end;gap:7px}
+.lab-mini-btn{font:inherit;font-size:11px;padding:5px 8px;background:#eef3ec;border:1px solid #bac8b9;border-radius:7px;color:#2f4a43;cursor:pointer}
+.lab-mini-btn:focus-visible,.lab-capture-actions button:focus-visible{outline:2px solid #b4522f;outline-offset:2px}
+#lab-spatial canvas{touch-action:none;cursor:grab}
+#lab-spatial canvas:active{cursor:grabbing}
+#lab-spatial:focus-visible{outline:3px solid #b4522f;outline-offset:2px}
+.lab-captures{margin-top:16px;background:#fbf7ee;border:1px solid #d9cfbc;border-radius:15px;padding:17px 18px 14px}
+.lab-captures-head{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin-bottom:14px}
+.lab-captures-head h2{font-size:20px}
+.lab-captures-head p{margin:4px 0 0;color:#6f6555;font-size:12px;max-width:650px}
+.lab-capture-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:7px;flex:none}
+.lab-capture-actions button{font:inherit;font-size:11px;border:1px solid #b9c8b9;border-radius:8px;background:#edf4ec;color:#2f4a43;padding:8px 10px;cursor:pointer}
+.lab-capture-actions #lab-save-a,.lab-capture-actions #lab-save-b{background:#2f4a43;border-color:#2f4a43;color:#fff}
+.lab-capture-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.lab-capture{margin:0;min-width:0;border:1px solid #d9cfbc;border-radius:11px;overflow:hidden}
+.lab-capture-frame{aspect-ratio:16/9;display:grid;place-items:center;background:#e1e7e2;color:#777d73;font-size:12px;overflow:hidden}
+.lab-capture-frame img{width:100%;height:100%;object-fit:contain;display:block}
+.lab-capture figcaption{padding:8px 11px;font-size:11px;color:#5e5d54;min-height:36px}
+.lab-capture-status{margin:10px 0 0;font-size:11px;color:#6f6555}
+@media(max-width:920px){.lab-captures-head{flex-direction:column}.lab-capture-actions{justify-content:flex-start}}
+@media(max-width:600px){.lab-capture-grid{grid-template-columns:1fr}.lab-captures{padding:12px}.lab-view-tools{justify-content:flex-start}}
+
 </style>
 </head>
 <body>
@@ -56,7 +79,7 @@ body{background:#f4efe4;color:#26211c}
 <section class="lab-intro">
 <div class="lab-kicker">INTERACTIVE CINEMATOGRAPHY</div>
 <h1>摄影机实验室</h1>
-<p>左边看相机怎样摆放，右边看真实三维取景。使用两组预设进行比较，再拖动参数观察空间、构图与透视如何改变。这里演示的是摄影原理，不代表情绪表达有固定答案。</p>
+<p>左侧空间视图可拖动旋转、滚轮缩放，右侧为实时摄影机画面。使用预设或调整参数后，还可锁定 A/B 画面并排比较。这里演示摄影原理，不预设固定的情绪效果。</p>
 </section>
 <main class="lab-layout">
 <aside class="lab-control">
@@ -78,9 +101,9 @@ body{background:#f4efe4;color:#26211c}
 <div class="lab-guide"><strong id="lab-guide-title">理解真实推进与光学变焦</strong><p id="lab-guide-body"></p></div>
 <div class="lab-views">
 <div class="lab-viewport">
-<div class="lab-view-head"><strong>空间视图</strong><span>相机、人物、前景与背景</span></div>
-<div class="lab-canvas" id="lab-spatial" aria-label="三维场景与摄影机位置"></div>
-<div class="lab-caption">锥形线框表示相机视锥。移动相机时，主体与远近物体的空间关系会改变。</div>
+<div class="lab-view-head"><strong>空间视图</strong><div class="lab-view-tools"><span>拖动旋转 · 滚轮缩放</span><button type="button" id="lab-overview-reset" class="lab-mini-btn">重置视角</button></div></div>
+<div class="lab-canvas" id="lab-spatial" role="region" tabindex="0" aria-label="可拖动旋转的三维空间观察视图。使用方向键旋转，滚轮缩放"></div>
+<div class="lab-caption">锥形线框是摄影机的取景范围；拖动或使用方向键查看机位与前后景的空间关系。</div>
 </div>
 <div class="lab-viewport">
 <div class="lab-view-head"><strong>摄影机取景</strong><span id="lab-shot-label">50 mm · 6.0 m</span></div>
@@ -88,6 +111,27 @@ body{background:#f4efe4;color:#26211c}
 <div class="lab-caption">试着观察前景柱、人物和远处建筑之间的相对大小及遮挡变化。</div>
 </div>
 </div>
+<section class="lab-captures" aria-label="A/B 镜头画面锁定对照">
+  <header class="lab-captures-head">
+    <div><h2>锁定画面 · A/B 对照</h2><p>调整参数或播放预设后，分别保存 A 与 B 的取景画面。保留两张画面便于观察遮挡、主体比例和背景变化。</p></div>
+    <div class="lab-capture-actions">
+      <button type="button" id="lab-save-a">将当前画面记为 A</button>
+      <button type="button" id="lab-save-b">记为 B</button>
+      <button type="button" id="lab-clear-captures">清空</button>
+    </div>
+  </header>
+  <div class="lab-capture-grid">
+    <figure class="lab-capture">
+      <div class="lab-capture-frame" id="lab-capture-a"><span>画面 A 尚未保存</span></div>
+      <figcaption id="lab-capture-caption-a">选择参数后点击“记为 A”</figcaption>
+    </figure>
+    <figure class="lab-capture">
+      <div class="lab-capture-frame" id="lab-capture-b"><span>画面 B 尚未保存</span></div>
+      <figcaption id="lab-capture-caption-b">变更参数后点击“记为 B”</figcaption>
+    </figure>
+  </div>
+  <p class="lab-capture-status" id="lab-capture-status" role="status" aria-live="polite">保存的画面仅用于当前页面对照，刷新后不保留。</p>
+</section>
 <div class="lab-facts"><strong id="lab-fact-title">关键观察</strong><p id="lab-fact"></p></div>
 <p class="lab-foot">教学约定：焦距以 36×24 mm 全画幅传感器的 24 mm 高度计算垂直视角；场景为简化的三维几何模型。透视主要由摄影机与物体的相对位置决定。镜头光学畸变、景深与真实复杂照明暂不模拟。首次打开需要联网加载 Three.js 模块，建议通过本地 HTTP 服务运行。</p>
 </section>
