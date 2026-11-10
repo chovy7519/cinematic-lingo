@@ -1,6 +1,6 @@
 /*
  * 机位角度数据。view 描述演示画面：
- * type=scene 用同一片山野，type=top 用正上方顶视图；
+ * type=scene 用同一处建筑场景，type=top 用正上方顶视图；
  * from / to 是相机的姿态参数（rx 俯仰、rz 倾斜、s 缩放、tx/ty 位移，单位 deg / %）。
  */
 window.ANGLE_DATA = {
