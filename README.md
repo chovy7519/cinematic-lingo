@@ -26,6 +26,8 @@ V0.3 功能验收通过后，项目建立 **Cinematic Editorial × Architectural
 
 V0.4 改动先提交到 Draft PR，不改变已验收的主分支版本。摄影棚人形刻意采用中性的雕塑化替身，旨在标定画幅和空间透视，并非逼真虚拟演员或真实皮肤材质。
 
+**第二轮角色修整**：词典面部用多层解剖光影平面细化；实验室人物拆分为独立 `js/character-maquette.js` 连续网格模块，并改进服装接缝和鞋形。代码修整不是最终高品质角色资产；专业 Blender 网格、UV/PBR 与 GLB 接入规格见 `docs/V0.4_CHARACTER_PRODUCTION.md`。
+
 ## V0.3 · 双板块体验深化（实验分支）
 
 ### 可视化词典 · Visual Dictionary
