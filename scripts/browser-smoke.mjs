@@ -72,6 +72,14 @@ try {
   const after = await spatial.screenshot();
   assert.notDeepEqual(before, after, 'dragging overview should change spatial view');
   await page.locator('#lab-overview-reset').click();
+  // Art-quality framing review: stable medium close-up at neutral eye level.
+  for (const [id,value] of [['height','1.6'],['distance','3'],['focal','50']]) {
+    await page.locator('#'+id).evaluate((input,next) => {
+      input.value = next;
+      input.dispatchEvent(new Event('input',{bubbles:true}));
+    }, value);
+  }
+  await page.locator('#lab-shot canvas').screenshot({path:'/tmp/cinematic-art-portrait-v04.png'});
 
   await page.locator('#lab-save-a').click();
   assert.equal(await page.locator('#lab-capture-a img').count(), 1, 'A screenshot should be retained');
