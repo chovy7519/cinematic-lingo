@@ -30,6 +30,31 @@
   </aside>
 
   <div class="content">
+    <section class="finder" id="term-finder" aria-label="快速查找电影术语">
+      <div class="finder-copy">
+        <label for="term-search">快速查找镜头术语</label>
+        <p>输入中文、英文或缩写，直接定位 46 个可视化词条。</p>
+      </div>
+      <div class="finder-field">
+        <input id="term-search" type="search" autocomplete="off" spellcheck="false"
+          placeholder="例如：特写、Push、POV、侧光" aria-describedby="term-search-status">
+        <button id="term-search-clear" type="button" hidden>清除</button>
+      </div>
+      <p class="finder-status" id="term-search-status" role="status" aria-live="polite">共 46 个术语 · 按主题浏览或直接搜索</p>
+    </section>
+
+    <section class="comparison-panel" id="compare-panel" hidden aria-label="镜头术语并排对照">
+      <header class="compare-panel-head">
+        <div>
+          <p class="kicker">SIDE BY SIDE / 对照观看</p>
+          <h2>两个镜头放在一起看</h2>
+          <p>点击画面重播，观察取景与镜头效果的区别。</p>
+        </div>
+        <button id="compare-panel-close" type="button">收起对照</button>
+      </header>
+      <div class="compare-grid" id="compare-columns"></div>
+    </section>
+
     <section class="section" id="section-shots">
       <div class="section-head">
         <div>
@@ -56,6 +81,14 @@
   </div>
 </main>
 
+<aside class="compare-tray" id="compare-tray" hidden aria-label="已选择的对照术语">
+  <span id="compare-summary" role="status" aria-live="polite">请选择两个术语进行对照</span>
+  <div class="compare-tray-actions">
+    <button id="compare-open" type="button" disabled>并排观看</button>
+    <button id="compare-clear" type="button">清空</button>
+  </div>
+</aside>
+
 <script src="js/scene.js"></script>
 <script src="js/data/shots.js"></script>
 <script src="js/data/angles.js"></script>
@@ -71,6 +104,7 @@
 <script src="js/demos/frame.js"></script>
 <script src="js/demos/light.js"></script>
 <script src="js/demos/edit.js"></script>
+<script src="js/dictionary-tools.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
