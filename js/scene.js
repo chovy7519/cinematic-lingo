@@ -127,10 +127,10 @@
       '<path d="M1174 680 Q1175 651 1202 649 Q1229 649 1230 680 L1222 716 Q1215 730 1198 728 Q1180 718 1174 680 Z" style="fill:url(#face-@@UID@@)"/>',
       '<path d="M1174 682 Q1168 643 1199 640 Q1215 642 1228 655 L1233 679 Q1220 665 1205 662 Q1185 677 1174 682 Z" fill="#121b20"/>',
       '<path d="M1173 679 Q1181 665 1187 663 L1191 650 L1177 650 Z" fill="#111a1e"/>',
-      '<path d="M1224 684 L1231 692 L1227 702 L1220 705" fill="none" stroke="#9c7c6c" stroke-width="2"/>',
-      '<path class="s-brow" d="M1187 677 Q1193 674 1199 676" stroke="#544b48" stroke-width="2" fill="none"/>',
-      '<path class="s-eye" d="M1189 685 Q1195 682 1200 685" stroke="#352d2d" stroke-width="2" fill="none"/>',
-      '<path class="s-line" d="M1207 707 Q1214 709 1220 704" stroke="#6e5a54" stroke-width="1.7" fill="none"/>',
+      '<path d="M1226 688 Q1231 696 1225 701 L1221 702" fill="none" stroke="#9f7f70" stroke-width="1.2" vector-effect="non-scaling-stroke" opacity=".68"/>',
+      '<path class="s-brow" d="M1187 678 Q1193 675 1200 678" stroke="#574743" stroke-width="1.1" vector-effect="non-scaling-stroke" fill="none" opacity=".72"/>',
+      '<path class="s-eye" d="M1188 686 Q1194 683.6 1200 686" stroke="#332d2c" stroke-width="1.4" vector-effect="non-scaling-stroke" fill="none" opacity=".84"/>',
+      '<path class="s-line" d="M1207 711 Q1213 713 1217 710" stroke="#825f56" stroke-width=".9" vector-effect="non-scaling-stroke" fill="none" opacity=".63"/>',
       '<path d="M1170 742 Q1185 749 1186 785 M1232 740 Q1225 760 1236 788" stroke="#c0b2a1" stroke-width="2" fill="none" opacity=".48"/>',
     '</g>'
   ].join('');
