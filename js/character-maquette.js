@@ -153,7 +153,7 @@ export function createCharacter(THREE, scene) {
     }
     for(let i=0;i<rows;i++) for(let j=0;j<segments;j++){
       const a=i*(segments+1)+j,b=a+segments+1;
-      indices.push(a,a+1,b,a+1,b+1,b);
+      indices.push(a,b,a+1,b,b+1,a+1);
     }
     const geometry=new THREE.BufferGeometry();
     geometry.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));
