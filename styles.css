@@ -798,3 +798,18 @@ body.has-compare-tray { padding-bottom: 85px; }
   body.has-compare-tray { padding-bottom:116px; }
   .card-compare-btn { padding:5px 8px; }
 }
+
+.card-lab-link {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  font-size: 12px;
+  line-height: 1.6;
+  text-decoration: none;
+  color: var(--green);
+  font-weight: 600;
+  border-bottom: 1px solid currentColor;
+  margin-top: 2px;
+}
+.card-lab-link:hover { color: var(--rust); }
+.card-lab-link:focus-visible { outline:2px solid var(--rust); outline-offset:3px; }
