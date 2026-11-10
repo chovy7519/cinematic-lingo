@@ -81,7 +81,7 @@
     function remapSvgIds(stage, prefix) {
       var idMap = new Map();
       stage.querySelectorAll('[id]').forEach(function(node) {
-        var oldId = node.id || node.getAttribute('id');
+        var oldId = node.getAttribute('id');
         var newId = prefix + oldId;
         idMap.set(oldId, newId);
         node.setAttribute('id', newId);
@@ -165,6 +165,7 @@
         entry.button.setAttribute('aria-pressed', String(chosen));
       });
       tray.hidden = selected.length === 0;
+      document.body.classList.toggle('has-compare-tray', selected.length > 0);
       openButton.disabled = selected.length !== 2;
       summary.textContent = selected.length === 0 ? '' :
         selected.map(function(id) { return byId.get(id).zh; }).join(' / ') +
