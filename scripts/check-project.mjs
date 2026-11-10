@@ -24,7 +24,7 @@ for (const [name,count] of categories) {
  const file='js/data/'+name+'.js';
  requireFile(file);
  const content=readFileSync(file,'utf8');
- const items=[...content.matchAll(/\n\s+id: '[^']+',\s*\n\s+no: '[^']+',/g)];
+ const items=[...content.matchAll(/\n    \{\n      id: '[^']+',\n      no: '[^']+',/g)];
  assert.equal(items.length,count,`${file} 中的术语数与目录不一致`);
  total+=items.length;
 }
