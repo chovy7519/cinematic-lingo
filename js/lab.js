@@ -51,8 +51,15 @@ const els = {
   height: document.getElementById('height'),
   distanceValue: document.getElementById('distance-value'),
   focalValue: document.getElementById('focal-value'),
-  heightValue: document.getElementById('height-value')
+  heightValue: document.getElementById('height-value'),
+  overviewReset: document.getElementById('lab-overview-reset'),
+  captureStatus: document.getElementById('lab-capture-status'),
+  captureFrameA: document.getElementById('lab-capture-a'),
+  captureFrameB: document.getElementById('lab-capture-b'),
+  captureCaptionA: document.getElementById('lab-capture-caption-a'),
+  captureCaptionB: document.getElementById('lab-capture-caption-b')
 };
+const captures = { a: null, b: null };
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color('#cbd9d9');
@@ -109,6 +116,31 @@ const overviewCamera = new THREE.PerspectiveCamera(47,1,0.1,120);
 overviewCamera.position.set(10,6,12);
 overviewCamera.lookAt(0,1,-2);
 overviewCamera.layers.enable(1);
+
+// An independent, inspectable overview camera. It does not affect the shot camera.
+const overviewPivot = new THREE.Vector3(0, 1, -2);
+const overviewOffset = overviewCamera.position.clone().sub(overviewPivot);
+const overviewDefaults = {
+ radius: overviewOffset.length(),
+ azimuth: Math.atan2(overviewOffset.x, overviewOffset.z),
+ elevation: Math.asin(overviewOffset.y / overviewOffset.length())
+};
+const overviewState = { ...overviewDefaults };
+function orientOverview() {
+ const horizontal = overviewState.radius * Math.cos(overviewState.elevation);
+ overviewCamera.position.set(
+   overviewPivot.x + Math.sin(overviewState.azimuth) * horizontal,
+   overviewPivot.y + Math.sin(overviewState.elevation) * overviewState.radius,
+   overviewPivot.z + Math.cos(overviewState.azimuth) * horizontal
+ );
+ overviewCamera.lookAt(overviewPivot);
+ overviewCamera.updateMatrixWorld();
+}
+function resetOverview() {
+ Object.assign(overviewState, overviewDefaults);
+ orientOverview();
+ paint();
+}
 const helper = new THREE.CameraHelper(camera);
 helper.layers.set(1);  // 不让取景画面看到自己的机位线框
 scene.add(helper);
@@ -116,8 +148,9 @@ const cameraBody = new THREE.Mesh(new THREE.BoxGeometry(0.28,0.2,0.45), mat('#b4
 cameraBody.layers.set(1);
 scene.add(cameraBody);
 
-function makeRenderer(host) {
- const r = new THREE.WebGLRenderer({antialias:true,alpha:false});
+function makeRenderer(host, keepDrawingBuffer = false) {
+ // Retain the shot canvas only so it can be captured from a direct user click.
+ const r = new THREE.WebGLRenderer({antialias:true,alpha:false,preserveDrawingBuffer:keepDrawingBuffer});
  r.setPixelRatio(Math.min(window.devicePixelRatio || 1,2));
  r.outputColorSpace = THREE.SRGBColorSpace;
  r.toneMapping = THREE.ACESFilmicToneMapping;
@@ -129,9 +162,16 @@ let spaceRenderer, shotRenderer;
 function resize(renderer,host,cam) {
  const bounds=host.getBoundingClientRect();
  const w=Math.max(2,Math.round(bounds.width)), h=Math.max(2,Math.round(bounds.height));
- renderer.setSize(w,h,false);
- cam.aspect=w/h;
- cam.updateProjectionMatrix();
+ const ratio = renderer.getPixelRatio();
+ const targetW = Math.floor(w * ratio);
+ const targetH = Math.floor(h * ratio);
+ if (renderer.domElement.width !== targetW || renderer.domElement.height !== targetH) {
+   renderer.setSize(w,h,false);
+ }
+ if (cam.aspect !== w/h) {
+   cam.aspect=w/h;
+   cam.updateProjectionMatrix();
+ }
 }
 function paint() {
  if(!spaceRenderer || !shotRenderer) return;
@@ -155,7 +195,8 @@ function updateUI() {
  els.distanceValue.textContent=state.distance.toFixed(1)+' m';
  els.focalValue.textContent=state.focal+' mm';
  els.heightValue.textContent=state.height.toFixed(1)+' m';
- els.shotLabel.textContent=state.focal+' mm · '+state.distance.toFixed(1)+' m';
+ const verticalFov = 2*Math.atan(24/(2*state.focal))*180/Math.PI;
+ els.shotLabel.textContent=state.focal+' mm · '+state.distance.toFixed(1)+' m · 视角 '+verticalFov.toFixed(1)+'°';
  document.querySelectorAll('.mode-btn').forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.mode===state.mode)));
  els.presets.querySelectorAll('.preset-btn').forEach((btn,i)=>btn.dataset.selected=String(i===state.activePreset));
  const m=MODES[state.mode];
@@ -191,7 +232,9 @@ function setPreset(index) {
 function setMode(mode) {
  if(!MODES[mode]) return;
  stopAnimation();
+ const changed = state.mode !== mode;
  state.mode=mode;
+ if (changed) clearCaptures();
  els.presets.replaceChildren();
  MODES[mode].presets.forEach((preset,i)=>{
    const btn=document.createElement('button');
@@ -207,6 +250,105 @@ function setMode(mode) {
    update();
  } else setPreset(0);
 }
+
+function renderCaptures() {
+ for (const key of ['a','b']) {
+   const item = captures[key];
+   const frame = key === 'a' ? els.captureFrameA : els.captureFrameB;
+   const caption = key === 'a' ? els.captureCaptionA : els.captureCaptionB;
+   frame.replaceChildren();
+   if (item) {
+     const img = document.createElement('img');
+     img.src = item.url;
+     img.alt = '画面 ' + key.toUpperCase() + '，' + item.label;
+     frame.append(img);
+     caption.textContent = item.label;
+   } else {
+     const empty = document.createElement('span');
+     empty.textContent = '画面 ' + key.toUpperCase() + ' 尚未保存';
+     frame.append(empty);
+     caption.textContent = '选择参数后点击“记为 ' + key.toUpperCase() + '”';
+   }
+ }
+}
+function clearCaptures() {
+ captures.a = null;
+ captures.b = null;
+ renderCaptures();
+ els.captureStatus.textContent = '已清空画面对照；每次切换实验类型也会清空快照。';
+}
+function captureShot(key) {
+ if (!shotRenderer) return;
+ try {
+   paint(); // render the current camera state before serializing its canvas
+   const url = shotRenderer.domElement.toDataURL('image/png');
+   if (!url.startsWith('data:image/png')) throw new Error('Canvas capture unavailable');
+   captures[key] = {
+     url,
+     label: (state.mode === 'dolly' ? '推镜 / 变焦' : state.mode === 'angle' ? '机位角度' : '焦距与透视') +
+       ' · ' + state.focal + ' mm · ' + state.distance.toFixed(1) + ' m · 高 ' + state.height.toFixed(1) + ' m'
+   };
+   renderCaptures();
+   els.captureStatus.textContent = '已记录画面 ' + key.toUpperCase() +
+     '。参数继续变化也不会覆盖已保存画面；可保存另一张并排比较。';
+ } catch(error) {
+   console.error('无法保存画面对照',error);
+   els.captureStatus.textContent = '当前浏览器无法保存 WebGL 画面，请检查浏览器支持或重新加载实验室。';
+ }
+}
+function setupOverviewInteraction() {
+ const canvas = spaceRenderer.domElement;
+ canvas.style.touchAction = 'none';
+ let drag = null;
+ canvas.addEventListener('pointerdown',function(event) {
+   if (event.pointerType === 'mouse' && event.button !== 0) return;
+   drag = { id:event.pointerId, x:event.clientX, y:event.clientY };
+   canvas.setPointerCapture(event.pointerId);
+ });
+ canvas.addEventListener('pointermove',function(event) {
+   if (!drag || event.pointerId !== drag.id) return;
+   const dx = event.clientX - drag.x, dy = event.clientY - drag.y;
+   drag.x = event.clientX; drag.y = event.clientY;
+   overviewState.azimuth -= dx * 0.006;
+   overviewState.elevation = THREE.MathUtils.clamp(overviewState.elevation + dy * 0.006, 0.1, 1.47);
+   orientOverview();
+   paint();
+ });
+ function stopDrag(event) {
+   if (drag && event.pointerId === drag.id) drag = null;
+ }
+ canvas.addEventListener('pointerup',stopDrag);
+ canvas.addEventListener('pointercancel',stopDrag);
+ canvas.addEventListener('lostpointercapture',function(){drag = null;});
+ canvas.addEventListener('wheel',function(event) {
+   event.preventDefault();
+   overviewState.radius = THREE.MathUtils.clamp(
+     overviewState.radius * (event.deltaY > 0 ? 1.09 : 0.91), 6, 40
+   );
+   orientOverview();
+   paint();
+ },{passive:false});
+ els.spatial.addEventListener('keydown',function(event) {
+   const delta = 0.14;
+   if (event.key === 'ArrowLeft') overviewState.azimuth -= delta;
+   else if (event.key === 'ArrowRight') overviewState.azimuth += delta;
+   else if (event.key === 'ArrowUp') overviewState.elevation += delta;
+   else if (event.key === 'ArrowDown') overviewState.elevation -= delta;
+   else if (event.key === '+' || event.key === '=') overviewState.radius *= 0.91;
+   else if (event.key === '-' || event.key === '_') overviewState.radius *= 1.09;
+   else return;
+   event.preventDefault();
+   overviewState.elevation = THREE.MathUtils.clamp(overviewState.elevation,0.1,1.47);
+   overviewState.radius = THREE.MathUtils.clamp(overviewState.radius,6,40);
+   orientOverview();
+   paint();
+ });
+ els.overviewReset.addEventListener('click',resetOverview);
+}
+document.getElementById('lab-save-a').addEventListener('click',()=>captureShot('a'));
+document.getElementById('lab-save-b').addEventListener('click',()=>captureShot('b'));
+document.getElementById('lab-clear-captures').addEventListener('click',clearCaptures);
+
 for(const btn of document.querySelectorAll('.mode-btn')){
  btn.addEventListener('click',()=>setMode(btn.dataset.mode));
 }
@@ -229,8 +371,11 @@ document.getElementById('lab-reset').addEventListener('click',()=>{
 
 try {
  spaceRenderer=makeRenderer(els.spatial);
- shotRenderer=makeRenderer(els.shot);
+ shotRenderer=makeRenderer(els.shot,true);
+ orientOverview();
+ setupOverviewInteraction();
  setMode('dolly');
+ renderCaptures();
  new ResizeObserver(paint).observe(els.spatial);
  new ResizeObserver(paint).observe(els.shot);
 } catch(error) {
