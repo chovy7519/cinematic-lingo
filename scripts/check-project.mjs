@@ -12,11 +12,14 @@ const lab = readFileSync('lab.html','utf8');
 function requireFile(file) {
  assert.ok(existsSync(file), '缺失文件：'+file);
 }
-for (const f of ['styles.css','js/lab.js','js/learning.js','docs/CONTENT_AUDIT.md','docs/V0.2_CONTENT_REVIEW.md']) requireFile(f);
+for (const f of ['styles.css','js/lab.js','js/lab-loader.js','favicon.svg','js/learning.js','docs/CONTENT_AUDIT.md','docs/V0.2_CONTENT_REVIEW.md']) requireFile(f);
 assert.match(index,/href="lab\.html"/,'词典首页缺少实验室入口');
 assert.match(index,/id="learning"/,'缺少学习区锚点');
 assert.match(index,/src="js\/learning\.js"/,'缺少学习区脚本');
-assert.match(lab,/type="module" src="js\/lab\.js"/,'实验室入口缺少模块脚本');
+assert.match(lab,/type="module" src="js\/lab-loader\.js"/,'实验室入口缺少模块加载脚本');
+assert.match(index,/href="favicon\.svg"/,'首页缺少站点图标');
+assert.match(lab,/href="favicon\.svg"/,'实验室缺少站点图标');
+assert.match(readFileSync('js/lab-loader.js','utf8'),/import\('\.\/lab\.js'\)/,'模块加载器未导入三维实验脚本');
 assert.match(lab,/id="lab-spatial"/,'缺少空间视图');
 assert.match(lab,/id="lab-shot"/,'缺少取景视图');
 
