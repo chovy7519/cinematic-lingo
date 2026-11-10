@@ -62,8 +62,8 @@
     '<g class="s-bg">',
       '<rect class="s-sky" x="0" y="0" width="2400" height="870" style="fill:url(#sky-@@UID@@)"/>',
       '<rect x="0" y="0" width="2400" height="900" style="fill:url(#glow-@@UID@@)"/>',
-      '<circle class="s-halo" cx="1842" cy="432" r="138" style="fill:#dfaa81;opacity:.13"/>',
-      '<circle class="s-sun" cx="1842" cy="432" r="58" style="fill:#f3c69c"/>',
+      '<circle class="s-halo" cx="1850" cy="330" r="138" style="fill:#dfaa81;opacity:.13"/>',
+      '<circle class="s-sun" cx="1850" cy="330" r="58" style="fill:#f3c69c"/>',
       '<path d="M0,635 C350,622 730,629 1160,613 S2030,595 2400,608" fill="none" stroke="#deb8a0" stroke-width="4" opacity=".3"/>',
       // Distant architecture, softened by the atmospheric depth.
       '<g class="film-skyline">',
