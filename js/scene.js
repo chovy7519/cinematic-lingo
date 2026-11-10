@@ -50,9 +50,21 @@
         '<stop offset="1" stop-color="#111b21"/>',
       '</linearGradient>',
       '<linearGradient id="face-@@UID@@" x1="0" y1="0" x2="1" y2=".4">',
-        '<stop offset="0" stop-color="#7e716b"/>',
-        '<stop offset=".52" stop-color="#bc9d88"/>',
-        '<stop offset="1" stop-color="#e3b99c"/>',
+        '<stop offset="0" stop-color="#615955"/>',
+        '<stop offset=".24" stop-color="#806e67"/>',
+        '<stop offset=".55" stop-color="#b4937e"/>',
+        '<stop offset=".84" stop-color="#d0ad94"/>',
+        '<stop offset="1" stop-color="#bfa08e"/>',
+      '</linearGradient>',
+      '<linearGradient id="face-side-@@UID@@" x1="0" y1="0" x2="1" y2=".8">',
+        '<stop offset="0" stop-color="#17242a" stop-opacity=".46"/>',
+        '<stop offset=".55" stop-color="#4e403b" stop-opacity=".14"/>',
+        '<stop offset="1" stop-color="#f6c9aa" stop-opacity=".17"/>',
+      '</linearGradient>',
+      '<linearGradient id="hair-@@UID@@" x1="0" y1="0" x2=".8" y2="1">',
+        '<stop offset="0" stop-color="#111c22"/>',
+        '<stop offset=".5" stop-color="#202a2e"/>',
+        '<stop offset="1" stop-color="#0e171d"/>',
       '</linearGradient>',
       '<radialGradient id="vignette-@@UID@@" cx="50%" cy="48%" r="67%">',
         '<stop offset=".4" stop-color="#0b1b23" stop-opacity="0"/>',
@@ -123,15 +135,31 @@
       '<path d="M1167 759 Q1157 774 1158 807 L1145 862 L1158 866 Q1182 799 1184 758 Z" fill="#172127"/>',
       '<path d="M1234 758 Q1245 777 1244 803 L1256 857 L1241 861 Q1225 797 1217 758 Z" fill="#1b252b"/>',
       '<path d="M1155 860 L1145 860 L1143 874 Q1151 879 1159 868 Z M1243 855 L1256 856 L1257 870 Q1250 875 1241 864 Z" fill="#b59682"/>',
-      '<path d="M1190 714 H1208 V747 H1190 Z" fill="#947a6d"/>',
-      '<path d="M1174 680 Q1175 651 1202 649 Q1229 649 1230 680 L1222 716 Q1215 730 1198 728 Q1180 718 1174 680 Z" style="fill:url(#face-@@UID@@)"/>',
-      '<path d="M1174 682 Q1168 643 1199 640 Q1215 642 1228 655 L1233 679 Q1220 665 1205 662 Q1185 677 1174 682 Z" fill="#121b20"/>',
-      '<path d="M1173 679 Q1181 665 1187 663 L1191 650 L1177 650 Z" fill="#111a1e"/>',
-      '<path d="M1226 688 Q1231 696 1225 701 L1221 702" fill="none" stroke="#9f7f70" stroke-width="1.2" vector-effect="non-scaling-stroke" opacity=".68"/>',
-      '<path class="s-brow" d="M1187 678 Q1193 675 1200 678" stroke="#574743" stroke-width="1.1" vector-effect="non-scaling-stroke" fill="none" opacity=".72"/>',
-      '<path class="s-eye" d="M1188 686 Q1194 683.6 1200 686" stroke="#332d2c" stroke-width="1.4" vector-effect="non-scaling-stroke" fill="none" opacity=".84"/>',
-      '<path class="s-line" d="M1207 711 Q1213 713 1217 710" stroke="#825f56" stroke-width=".9" vector-effect="non-scaling-stroke" fill="none" opacity=".63"/>',
-      '<path d="M1170 742 Q1185 749 1186 785 M1232 740 Q1225 760 1236 788" stroke="#c0b2a1" stroke-width="2" fill="none" opacity=".48"/>',
+      // Portrait direction: a constructed three-quarter figure, not iconography.
+      // Soft lit planes are visible on CU, while the silhouette holds at wide scale.
+      '<path d="M1191 713 Q1193 723 1189 741 L1206 744 Q1203 725 1209 714 Z" fill="#8e7365"/>',
+      '<path d="M1180 678 Q1176 653 1195 644 Q1203 640 1213 645 Q1231 654 1229 676 L1226 696 Q1221 716 1207 726 Q1196 728 1186 717 Q1178 700 1180 678 Z" style="fill:url(#face-@@UID@@)"/>',
+      // Shadow plane tucked under the cheekbone.
+      '<path d="M1180 678 Q1183 701 1195 718 Q1201 723 1208 725 Q1192 730 1185 714 Q1176 701 1180 678 Z" style="fill:url(#face-side-@@UID@@)"/>',
+      // Right-side warm bounce: narrow enough to read as light, not makeup.
+      '<path d="M1212 657 Q1226 665 1229 682 Q1228 701 1218 715 Q1227 694 1220 678 Q1217 669 1212 657 Z" fill="#f2c6a1" opacity=".19"/>',
+      // Scalp and side-part, breaking the old triangular helmet silhouette.
+      '<path d="M1178 688 Q1170 663 1180 648 Q1189 637 1201 640 Q1211 636 1224 646 Q1230 652 1234 669 L1228 681 Q1222 666 1211 657 Q1203 659 1194 663 Q1185 671 1178 688 Z" style="fill:url(#hair-@@UID@@)"/>',
+      '<path d="M1181 654 Q1198 644 1210 645 Q1222 650 1227 662" stroke="#586063" stroke-width="1.3" fill="none" opacity=".24"/>',
+      '<path d="M1178 679 Q1174 679 1176 689 Q1178 699 1183 697" fill="#8d7065" opacity=".68"/>',
+      // Three-quarter nasal ridge and terminus are modelled as tonal planes,
+      // not a disconnected hook that inflates to a comic-book nose in CU.
+      '<path d="M1215 674 Q1217 683 1222 690 L1226 694 L1222 698 L1216 699" fill="#7a5a50" opacity=".24"/>',
+      '<path d="M1216 681 Q1218 690 1223 693 Q1221 696 1216 696" fill="none" stroke="#e4b89e" stroke-width=".75" opacity=".57" vector-effect="non-scaling-stroke"/>',
+      // Soft brow ridge, eye socket and lower lid. No pupil dots or cartoon smile.
+      '<path class="s-brow" d="M1188 680 Q1196 676 1202 678" stroke="#4c403c" stroke-width="1.1" fill="none" opacity=".6" vector-effect="non-scaling-stroke"/>',
+      '<path d="M1188 687 Q1195 683 1201 686 Q1195 689 1188 687 Z" fill="#4e403b" opacity=".38"/>',
+      '<path class="s-eye" d="M1189 686.6 Q1194 684.6 1199 686" stroke="#372e2d" stroke-width=".9" fill="none" opacity=".7" vector-effect="non-scaling-stroke"/>',
+      '<path d="M1191 692 Q1197 694 1202 691 M1208 690 Q1212 689 1215 690" stroke="#e4bda2" stroke-width=".7" fill="none" opacity=".31" vector-effect="non-scaling-stroke"/>',
+      // Lips belong to the shadow, almost disappearing in wide frames.
+      '<path class="s-line" d="M1209 710 Q1214 710.7 1218 709.2" stroke="#624943" stroke-width=".95" fill="none" opacity=".58" vector-effect="non-scaling-stroke"/>',
+      '<path d="M1210 713 Q1214 714 1217 712.5" stroke="#e3b19a" stroke-width=".7" fill="none" opacity=".3" vector-effect="non-scaling-stroke"/>',
+      '<path d="M1176 744 Q1185 751 1187 779 M1227 741 Q1230 755 1235 787" stroke="#b7ac9f" stroke-width="1.7" fill="none" opacity=".25"/>',
     '</g>'
   ].join('');
 
