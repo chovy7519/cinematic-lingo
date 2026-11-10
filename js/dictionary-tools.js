@@ -82,7 +82,7 @@
       var idMap = new Map();
       stage.querySelectorAll('[id]').forEach(function(node) {
         var oldId = node.getAttribute('id');
-        var newId = prefix + oldId;
+        var newId = oldId + '-' + prefix; // preserve prefixes used by SVG animation selectors
         idMap.set(oldId, newId);
         node.setAttribute('id', newId);
       });
