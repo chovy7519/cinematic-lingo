@@ -63,19 +63,21 @@ export function createCharacter(THREE, scene) {
   const neck=add(new THREE.CylinderGeometry(.066,.074,.135,24),skin,'neck');
   neck.position.set(0,1.615,.012);
 
-  // Lapel panels are shallow planes, in the exact same tone family as the coat.
-  // Avoid bright grey strips that read like ribbons from the shot camera.
-  function lapel(points,material,z,name){
-    const shape = new THREE.Shape();
-    shape.moveTo(points[0][0],points[0][1]);
-    points.slice(1).forEach(p=>shape.lineTo(p[0],p[1]));
-    shape.closePath();
-    const mesh=add(new THREE.ShapeGeometry(shape),material,name);
-    mesh.position.z=z;
-  }
-  lapel([[-.058,1.51],[.054,1.51],[.045,1.31],[-.049,1.31]],undershirt,.18,'shirt-opening');
-  lapel([[-.282,1.444],[-.066,1.514],[-.017,1.33],[-.11,1.297]],seams,.197,'left-lapel');
-  lapel([[.282,1.444],[.066,1.514],[.017,1.33],[.11,1.297]],seams,.197,'right-lapel');
+  // A quiet high-neck stand-in rather than an imitation business suit.
+  // The torso remains a single uninterrupted matte form at medium distance.
+  const neckBand=add(new THREE.CylinderGeometry(.095,.115,.11,32,1,true),coat,'integrated-high-collar');
+  neckBand.position.set(0,1.574,.005);
+  const neckline=add(new THREE.TorusGeometry(.082,.006,8,48,Math.PI*1.34),seams,'collar-seam');
+  neckline.rotation.x=Math.PI/2;
+  neckline.rotation.z=.14;
+  neckline.position.set(0,1.62,.014);
+  // Subtle garment seam: a narrow tonal cue, never a floating polygon.
+  const seamCurve=new THREE.CatmullRomCurve3([
+    new THREE.Vector3(0,1.485,.173),
+    new THREE.Vector3(-.005,1.365,.182),
+    new THREE.Vector3(.003,1.15,.182)
+  ]);
+  add(new THREE.TubeGeometry(seamCurve,14,.0025,6,false),seams,'front-seam');
 
   // Segmentless tapered appendages built from a smooth centerline curve.
   // This removes the ringed cuffs and capsule joints of the first whitebox.
@@ -117,9 +119,22 @@ export function createCharacter(THREE, scene) {
     ],[.122,.116,.10,.082]),coat,'trouser-'+(side<0?'left':'right'));
 
     // A low, close-fitting shoe last with a restrained toe, not a round ball.
-    const shoe=add(new THREE.BoxGeometry(.184,.085,.283),leather,'shoe-'+(side<0?'left':'right'));
-    shoe.position.set(side*.160,.068,.083);
-    shoe.rotation.y=side*.04;
+    const footprint=new THREE.Shape();
+    footprint.moveTo(-.075,.135);
+    footprint.lineTo(-.075,-.085);
+    footprint.quadraticCurveTo(-.074,-.175,-.025,-.177);
+    footprint.lineTo(.025,-.177);
+    footprint.quadraticCurveTo(.076,-.172,.076,-.095);
+    footprint.lineTo(.076,.135);
+    footprint.closePath();
+    const shoeGeometry=new THREE.ExtrudeGeometry(footprint,{
+      depth:.062,bevelEnabled:true,bevelSegments:3,
+      bevelSize:.014,bevelThickness:.011,curveSegments:8
+    });
+    shoeGeometry.rotateX(-Math.PI/2);
+    const shoe=add(shoeGeometry,leather,'shoe-'+(side<0?'left':'right'));
+    shoe.position.set(side*.16,.027,.082);
+    shoe.rotation.y=side*.03;
   }
 
   // Surface anatomy: facial proportions are built into one continuous topology.
@@ -168,7 +183,7 @@ export function createCharacter(THREE, scene) {
   const hairCap=add(headPatch(24,72,(v,u)=>{
     const theta=Math.PI*2*u;
     const front=Math.max(0,Math.cos(theta));
-    const hairline = -.058 + front*(.121 + .011*Math.sin(theta*2));
+    const hairline = -.055 + front*(.160 + .006*Math.sin(theta*2));
     const phiEnd=Math.acos(THREE.MathUtils.clamp(hairline/H,-.95,.95));
     return surface(phiEnd*v,theta,.004);
   }),hair,'sculpted-hair-cap');
