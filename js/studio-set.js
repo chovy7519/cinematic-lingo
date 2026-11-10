@@ -148,9 +148,9 @@ export function createStudio(THREE) {
     const mesh=attach(new THREE.ShapeGeometry(shape),material,0,0,z);
     return mesh;
   }
-  const seam=mat('#425258',.92);
+  const seam=mat('#34484b',.94);
   seam.side=THREE.DoubleSide;
-  const shirtMat=mat('#a3aaa4',.92);
+  const shirtMat=mat('#657776',.94);
   shirtMat.side=THREE.DoubleSide;
   panel([[-.065,1.55],[.067,1.55],[.047,1.26],[-.05,1.26]],shirtMat,.258);
   panel([[-.275,1.48],[-.073,1.54],[-.017,1.32],[-.103,1.24]],seam,.27);
@@ -161,48 +161,34 @@ export function createStudio(THREE) {
     button.scale.z=.35;
   }
 
+  // An intentional architectural scale maquette, not a toy or fake human.
+  // Expressionless porcelain makes changes in framing / angle the readable variable.
   const head=new THREE.Group();
-  head.position.set(-.012,1.80,.017);
-  head.rotation.y=.11;
-  head.rotation.x=-.04;
+  head.position.set(-.012,1.81,.018);
+  head.rotation.y=.10;
+  head.rotation.x=-.035;
   figure.add(head);
-  function facePart(geometry,material,x,y,z){
+  function headPart(geometry,material,x,y,z){
     const mesh=new THREE.Mesh(geometry,material);
-    mesh.position.set(x,y,z);mesh.castShadow=true;head.add(mesh);return mesh;
-  }
-  const face=facePart(new THREE.SphereGeometry(.210,36,28),skin,0,0,0);
-  face.scale.set(.91,1.17,.96);
-  // A soft sculpted hair volume follows the skull rather than a flat black cap.
-  const hairTexture=mat('#2a302f',.92);
-  const crown=facePart(new THREE.SphereGeometry(.218,36,22,0,Math.PI*2,0,Math.PI*.43),hairTexture,0,.035,-.013);
-  crown.scale.set(.94,1.14,.99);
-  const backHair=facePart(new THREE.SphereGeometry(.190,26,20),hairTexture,0,-.012,-.13);
-  backHair.scale.set(.91,1.12,.53);
-  for(const side of [-1,1]){
-    facePart(new THREE.SphereGeometry(.025,12,8),skin,side*.190,-.044,-.013);
-  }
-  // Contours, not emoji dots. Eyelids and mouth are subtle tube curves.
-  const facialInk=mat('#564a43',.94);
-  function contour(points,radius,material){
-    const curve=new THREE.CatmullRomCurve3(points.map(p=>new THREE.Vector3(...p)));
-    const mesh=new THREE.Mesh(new THREE.TubeGeometry(curve,12,radius,5,false),material);
+    mesh.position.set(x,y,z);
+    mesh.castShadow=true;mesh.receiveShadow=true;
     head.add(mesh);
+    return mesh;
   }
-  for(const side of [-1,1]){
-    contour([[side*.054,.020,.193],[side*.080,.024,.188],[side*.103,.017,.182]],.0036,facialInk);
-    contour([[side*.058,.061,.188],[side*.084,.066,.181],[side*.106,.061,.176]],.0026,hairTexture);
-  }
-  const nose=facePart(new THREE.SphereGeometry(.026,14,12),skin,.009,-.035,.198);
-  nose.scale.set(.56,1.26,.70);
-  contour([[-.029,-.119,.181],[.005,-.123,.187],[.038,-.116,.18]],.0028,mat('#98796b',.94));
+  const porcelain=mat('#b7b0a5',.97);
+  const face=headPart(new THREE.SphereGeometry(.20,40,30),porcelain,0,0,0);
+  face.scale.set(.86,1.22,.9);
+  // A subdued nose plane catches light without any cartoonish facial decals.
+  const ridge=headPart(new THREE.SphereGeometry(.028,16,12),porcelain,.01,-.041,.170);
+  ridge.scale.set(.50,1.12,.51);
 
   // Relaxed asymmetric sleeves with tapered cuffs and integrated hands.
   for(const side of [-1,1]){
-    const upper=attach(new THREE.CapsuleGeometry(.086,.45,7,12),coat,side*.363,1.23,-.016);
+    const upper=attach(new THREE.CapsuleGeometry(.077,.47,9,14),coat,side*.363,1.23,-.016);
     upper.rotation.z=side*.13;
     const cuff=attach(new THREE.CylinderGeometry(.079,.075,.11,14),coat,side*.416,.81,.006);
     cuff.rotation.z=side*.12;
-    const hand=attach(new THREE.CapsuleGeometry(.051,.062,4,10),skin,side*.429,.687,.008);
+    const hand=attach(new THREE.CapsuleGeometry(.039,.069,5,12),porcelain,side*.429,.676,.008);
     hand.rotation.z=side*.10;
     const leg=attach(new THREE.CylinderGeometry(.110,.091,.70,16),coat,side*.162,.40,0);
     leg.scale.z=.82;
