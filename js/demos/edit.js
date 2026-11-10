@@ -11,22 +11,24 @@
   function bScene() {
     return [
       '<svg class="ed-svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">',
-        '<rect x="0" y="0" width="1600" height="900" fill="#0f1725"/>',
-        '<rect x="0" y="0" width="1600" height="640" fill="#17223a"/>',
-        '<rect x="0" y="700" width="1600" height="200" fill="#090d16"/>',
-        '<rect x="0" y="686" width="1600" height="18" fill="#1d2740"/>',
+        '<rect x="0" y="0" width="1600" height="900" fill="#101d24"/>',
+        '<rect x="0" y="0" width="1600" height="640" fill="#22313a"/>',
+        '<path d="M0 0 H190 V900 H0 Z M1120 0 H1600 V900 H1120 Z" fill="#121f26" opacity=".50"/>',
+        '<path d="M206 0 V900 M1108 0 V900" stroke="#6a7878" stroke-width="5" opacity=".2"/>',
+        '<rect x="0" y="700" width="1600" height="200" fill="#0c171d"/>',
+        '<rect x="0" y="686" width="1600" height="18" fill="#536468"/>',
 
         // 圆窗 + 月亮（与 A 的太阳同位同大）
-        '<circle cx="1472" cy="192" r="94" fill="#050a14"/>',
+        '<circle cx="1472" cy="192" r="94" fill="#12232d"/>',
         '<circle cx="1472" cy="192" r="70" fill="#cfe0ff" opacity=".14"/>',
         '<circle cx="1490" cy="172" r="34" fill="#eaf1ff"/>',
-        '<g stroke="#2b3a58" stroke-width="9" fill="none">',
+        '<g stroke="#7c8b8b" stroke-width="9" fill="none">',
           '<circle cx="1472" cy="192" r="94"/>',
           '<path d="M1472,98 L1472,286 M1378,192 L1566,192"/>',
         '</g>',
 
         // 桌子
-        '<rect x="120" y="660" width="680" height="26" fill="#2a1c14"/>',
+        '<rect x="120" y="660" width="680" height="26" fill="#66594e"/>',
         '<rect x="170" y="686" width="18" height="200" fill="#1b110b"/>',
         '<rect x="736" y="686" width="18" height="200" fill="#1b110b"/>',
 
@@ -36,7 +38,7 @@
         '<circle cx="300" cy="600" r="112" fill="#ffb469" opacity=".06"/>',
         '<circle cx="300" cy="600" r="76" fill="#ffb469" opacity=".07"/>',
         '<ellipse cx="300" cy="662" rx="132" ry="12" fill="#ffb469" opacity=".16"/>',
-        '<path d="M258,600 L342,600 L322,556 L278,556 Z" fill="#e8b071"/>',
+        '<path d="M258,600 L342,600 L322,556 L278,556 Z" fill="#b48969"/>',
         '<rect x="296" y="600" width="8" height="62" fill="#8d6a45"/>',
         '<rect x="278" y="656" width="44" height="8" rx="3" fill="#8d6a45"/>',
 
