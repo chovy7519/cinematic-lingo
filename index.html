@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>电影镜头语言 · 可视化词典</title>
 <meta name="description" content="给零基础新手的电影镜头语言可视化词典，用动画演示景别、机位角度、运镜、构图、灯光与转场。">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -25,10 +26,11 @@
 <main class="layout">
   <aside class="rail">
     <div id="rail-nav"></div>
-    <p class="rail-note">六个分区已全部可用：景别、机位角度、运镜、构图、灯光、转场。每张卡片都能点画面重播。</p>
+    <p class="rail-note">六章词典保留原浏览结构；新增知识维度标签与易混淆概念练习。动画可点击重播。</p>
   </aside>
 
   <div class="content">
+    <section class="learning-section" id="learning" aria-label="易混淆概念理解检查"></section>
     <section class="section" id="section-shots">
       <div class="section-head">
         <div>
@@ -62,6 +64,7 @@
 <script src="js/data/frame.js"></script>
 <script src="js/data/light.js"></script>
 <script src="js/data/edit.js"></script>
+<script src="js/learning.js"></script>
 <script src="js/section.js"></script>
 <script src="js/card.js"></script>
 <script src="js/demos/angles.js"></script>
