@@ -148,13 +148,13 @@ export function createStudio(THREE) {
     const mesh=attach(new THREE.ShapeGeometry(shape),material,0,0,z);
     return mesh;
   }
-  const seam=mat('#34484b',.94);
+  const seam=mat('#2d4044',.97);
   seam.side=THREE.DoubleSide;
-  const shirtMat=mat('#657776',.94);
+  const shirtMat=mat('#34484a',.95);
   shirtMat.side=THREE.DoubleSide;
   panel([[-.065,1.55],[.067,1.55],[.047,1.26],[-.05,1.26]],shirtMat,.258);
-  panel([[-.275,1.48],[-.073,1.54],[-.017,1.32],[-.103,1.24]],seam,.27);
-  panel([[.276,1.48],[.076,1.54],[.021,1.32],[.101,1.24]],seam,.27);
+  panel([[-.232,1.49],[-.058,1.52],[-.018,1.34],[-.09,1.30]],seam,.27);
+  panel([[.232,1.49],[.058,1.52],[.018,1.34],[.09,1.30]],seam,.27);
   const buttonMat=mat('#8b7867',.67,.20);
   for(const y of [1.20,1.04]){
     const button=attach(new THREE.SphereGeometry(.013,10,8),buttonMat,.085,y,.247);
@@ -177,23 +177,24 @@ export function createStudio(THREE) {
   }
   const porcelain=mat('#b7b0a5',.97);
   const face=headPart(new THREE.SphereGeometry(.20,40,30),porcelain,0,0,0);
-  face.scale.set(.86,1.22,.9);
+  face.scale.set(.82,1.13,.87);
   // A subdued nose plane catches light without any cartoonish facial decals.
-  const ridge=headPart(new THREE.SphereGeometry(.028,16,12),porcelain,.01,-.041,.170);
-  ridge.scale.set(.50,1.12,.51);
+  const ridge=headPart(new THREE.SphereGeometry(.018,16,12),porcelain,.01,-.041,.157);
+  ridge.scale.set(.48,1.0,.42);
 
-  // Relaxed asymmetric sleeves with tapered cuffs and integrated hands.
+  // Slender, continuous coat sleeves and tailored straight trousers:
+  // no disconnected white mannequin hands, cuff rings or round toy shoes.
   for(const side of [-1,1]){
-    const upper=attach(new THREE.CapsuleGeometry(.077,.47,9,14),coat,side*.363,1.23,-.016);
-    upper.rotation.z=side*.13;
-    const cuff=attach(new THREE.CylinderGeometry(.079,.075,.11,14),coat,side*.416,.81,.006);
-    cuff.rotation.z=side*.12;
-    const hand=attach(new THREE.CapsuleGeometry(.039,.069,5,12),porcelain,side*.429,.676,.008);
-    hand.rotation.z=side*.10;
-    const leg=attach(new THREE.CylinderGeometry(.110,.091,.70,16),coat,side*.162,.40,0);
-    leg.scale.z=.82;
-    const shoe=attach(new THREE.SphereGeometry(.127,20,12),leather,side*.163,.105,.074);
-    shoe.scale.set(1,.55,1.37);
+    const sleeve=attach(new THREE.CylinderGeometry(.097,.072,.65,20),coat,side*.357,1.145,-.008);
+    sleeve.rotation.z=side*.135;
+    sleeve.scale.z=.77;
+    const sleeveEnd=attach(new THREE.SphereGeometry(.071,16,10),coat,side*.399,.828,-.003);
+    sleeveEnd.scale.set(1,.36,.8);
+    const leg=attach(new THREE.CylinderGeometry(.126,.091,.77,20),coat,side*.154,.403,.005);
+    leg.scale.z=.80;
+    const foot=attach(new THREE.BoxGeometry(.178,.102,.29),leather,side*.154,.061,.087);
+    foot.rotation.y=side*.045;
+    foot.castShadow=true;
   }
   figure.position.y=.035;
   scene.add(figure);
