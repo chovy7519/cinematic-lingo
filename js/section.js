@@ -12,7 +12,7 @@
             '<span class="card-en">' + item.en + '</span></h3></div>',
           '<span class="card-abbr">' + item.abbr + '</span>',
         '</header>',
-        window.FilmLearning.facetHTML(sectionId, item.id),
+        window.FilmFacets.facetHTML(sectionId, item.id),
         '<p class="card-plain">' + item.plain + '</p>',
         '<div class="card-body">',
           '<div class="stage-wrap">',
