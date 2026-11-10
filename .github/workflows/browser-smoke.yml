@@ -31,4 +31,5 @@ jobs:
             /tmp/cinematic-art-closeup-v04.png
             /tmp/cinematic-art-lab-v04.png
             /tmp/cinematic-art-shot-v04.png
+            /tmp/cinematic-art-portrait-v04.png
           if-no-files-found: ignore
