@@ -64,8 +64,8 @@ for (const id of ['lab-spatial', 'lab-shot', 'lab-overview-reset',
 }
 const studioSource = readFileSync('js/studio-set.js','utf8');
 const characterSource = readFileSync('js/character-maquette.js','utf8');
-assert.match(studioSource, /import\\s*\\{\\s*createCharacter\\s*\\}\\s*from/, '摄影棚场景未导入独立角色模块');
-assert.match(studioSource, /createCharacter\\(THREE,scene\\)/, '摄影棚没有装配角色模型');
+assert.match(studioSource, /import\s*\{\s*createCharacter\s*\}\s*from/, '摄影棚场景未导入独立角色模块');
+assert.match(studioSource, /createCharacter\(THREE,scene\)/, '摄影棚没有装配角色模型');
 assert.match(characterSource, /one-piece-sculpted-head/, '角色没有连续雕塑化头部网格');
 const dictionaryScene = readFileSync('js/scene.js','utf8');
 assert.match(dictionaryScene, /face-side-@@UID@@/, '词典人物缺少面部明暗体块');
