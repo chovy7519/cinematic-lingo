@@ -15,7 +15,7 @@ function requireFile(path) {
 }
 for (const path of [
   'styles.css', 'art-direction.css', 'favicon.svg', 'js/facets.js', 'js/dictionary-tools.js', 'js/studio-set.js', 'docs/V0.4_ART_DIRECTION.md',
-  'js/lab.js', 'js/lab-loader.js', 'docs/CONTENT_AUDIT.md',
+  'js/lab.js', 'js/lab-loader.js', 'js/studio-set.js', 'js/character-maquette.js', 'docs/CONTENT_AUDIT.md',
   'docs/V0.2_CONTENT_REVIEW.md', 'CHANGELOG.md'
 ]) requireFile(path);
 
@@ -62,6 +62,13 @@ for (const id of ['lab-spatial', 'lab-shot', 'lab-overview-reset',
   'lab-capture-b', 'lab-capture-status']) {
   assert.ok(lab.includes('id="' + id + '"'), '实验室缺少控件：' + id);
 }
+const studioSource = readFileSync('js/studio-set.js','utf8');
+const characterSource = readFileSync('js/character-maquette.js','utf8');
+assert.match(studioSource, /import\\s*\\{\\s*createCharacter\\s*\\}\\s*from/, '摄影棚场景未导入独立角色模块');
+assert.match(studioSource, /createCharacter\\(THREE,scene\\)/, '摄影棚没有装配角色模型');
+assert.match(characterSource, /one-piece-sculpted-head/, '角色没有连续雕塑化头部网格');
+const dictionaryScene = readFileSync('js/scene.js','utf8');
+assert.match(dictionaryScene, /face-side-@@UID@@/, '词典人物缺少面部明暗体块');
 const labScript = readFileSync('js/lab.js', 'utf8');
 assert.match(labScript, /function setupOverviewInteraction\(\)/, '缺少空间观察交互');
 assert.match(labScript, /function captureShot\(key\)/, '缺少 A\/B 画面捕获');
