@@ -13,9 +13,10 @@ function requireFile(file) {
 }
 requireFile('styles.css');
 requireFile('js/lab.js');
+requireFile('js/lab-loader.js');
 requireFile('docs/CONTENT_AUDIT.md');
 assert.match(index,/href="lab\.html"/,'词典主页缺少实验室入口');
-assert.match(lab,/type="module" src="js\/lab\.js"/,'实验室入口缺少模块脚本');
+assert.match(lab,/type="module" src="js\/lab-loader\.js"/,'实验室入口缺少模块加载脚本');
 assert.match(lab,/id="lab-spatial"/,'缺少空间视图');
 assert.match(lab,/id="lab-shot"/,'缺少取景视图');
 
