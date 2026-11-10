@@ -13,34 +13,52 @@ const app = readFileSync('js/app.js', 'utf8');
 function requireFile(path) {
   assert.ok(existsSync(path), '缺失文件：' + path);
 }
-
 for (const path of [
-  'styles.css', 'favicon.svg', 'js/facets.js',
+  'styles.css', 'favicon.svg', 'js/facets.js', 'js/dictionary-tools.js',
   'js/lab.js', 'js/lab-loader.js', 'docs/CONTENT_AUDIT.md',
   'docs/V0.2_CONTENT_REVIEW.md', 'CHANGELOG.md'
 ]) requireFile(path);
 
+// Only two user-facing modules: dictionary and camera lab. No quiz system.
 assert.match(index, /href="lab\.html"/, '词典首页缺少实验室入口');
-assert.match(app, /href="lab\.html"/, '目录缺少独立实验室入口');
-assert.match(index, /src="js\/facets\.js"/, '词典缺少标签脚本');
-assert.doesNotMatch(index, /id="learning"|js\/learning\.js/, '首页仍包含答题功能');
-assert.doesNotMatch(app, /FilmLearning|#learning|概念辨析/, '首页脚本仍含答题依赖');
-assert.ok(!existsSync('js/learning.js'), '旧版答题脚本未清理');
+assert.match(app, /href="lab\.html"/, '词典侧栏缺少实验室入口');
+assert.match(index, /src="js\/facets\.js"/, '词典缺少知识标签脚本');
+assert.match(index, /id="term-search"/, '缺少术语查找输入框');
+assert.match(index, /id="term-search-status"/, '缺少搜索状态提示');
+assert.match(index, /id="compare-panel"/, '缺少并排对照容器');
+assert.match(index, /id="compare-tray"/, '缺少并排对照选择条');
+assert.match(index, /src="js\/dictionary-tools\.js"[\s\S]*src="js\/app\.js"/,
+  '词典工具脚本应该在页面装配脚本之前加载');
+assert.match(app, /FilmDictionaryTools\.init\(\)/, '词典工具没有完成初始化');
+assert.doesNotMatch(index, /id="learning"|js\/learning\.js/, '首页仍有旧的答题模块');
+assert.doesNotMatch(app, /FilmLearning|#learning|概念辨析/, '主页面脚本仍有测验依赖');
+assert.ok(!existsSync('js/learning.js'), '旧版测验脚本未清理');
+
+// Camera lab structure and screenshot/orbit wiring.
 assert.match(lab, /type="module" src="js\/lab-loader\.js"/, '实验室缺少模块加载脚本');
 assert.match(index, /href="favicon\.svg"/, '首页缺少站点图标');
 assert.match(lab, /href="favicon\.svg"/, '实验室缺少站点图标');
-assert.match(readFileSync('js/lab-loader.js', 'utf8'), /import\('\.\/lab\.js'\)/, '实验室加载器没有导入三维脚本');
-assert.match(lab, /id="lab-spatial"/, '缺少空间视图');
-assert.match(lab, /id="lab-shot"/, '缺少取景视图');
+assert.match(readFileSync('js/lab-loader.js','utf8'), /import\('\.\/lab\.js'\)/,
+  '实验室模块加载器没有导入 Three.js 实验页面');
+for (const id of ['lab-spatial', 'lab-shot', 'lab-overview-reset',
+  'lab-save-a', 'lab-save-b', 'lab-clear-captures', 'lab-capture-a',
+  'lab-capture-b', 'lab-capture-status']) {
+  assert.ok(lab.includes('id="' + id + '"'), '实验室缺少控件：' + id);
+}
+const labScript = readFileSync('js/lab.js', 'utf8');
+assert.match(labScript, /function setupOverviewInteraction\(\)/, '缺少空间观察交互');
+assert.match(labScript, /function captureShot\(key\)/, '缺少 A\/B 画面捕获');
+assert.match(labScript, /preserveDrawingBuffer:keepDrawingBuffer/, '缺少捕获用绘图缓冲区配置');
 
+// Every term and visible facet must still be present.
 const terms = new Set();
 let total = 0;
 for (const [name, expected] of categories) {
   const path = 'js/data/' + name + '.js';
   requireFile(path);
-  const content = readFileSync(path, 'utf8');
-  const items = [...content.matchAll(/\n    \{\n      id: '([^']+)',\n      no: '[^']+',/g)];
-  assert.equal(items.length, expected, path + ' 中的术语数量不一致');
+  const source = readFileSync(path, 'utf8');
+  const items = [...source.matchAll(/\n    \{\n      id: '([^']+)',\n      no: '[^']+',/g)];
+  assert.equal(items.length, expected, path + ' 中术语数量不一致');
   for (const [, id] of items) {
     const key = name + ':' + id;
     assert.ok(!terms.has(key), '术语 ID 重复：' + key);
@@ -48,21 +66,30 @@ for (const [name, expected] of categories) {
   }
   total += items.length;
 }
-assert.equal(total, 46, '术语总数应为 46');
-
+assert.equal(total, 46, '术语总数应当为 46');
 const context = { window: {} };
-vm.runInNewContext(readFileSync('js/facets.js', 'utf8'), context, {filename: 'js/facets.js'});
+vm.runInNewContext(readFileSync('js/facets.js','utf8'), context, { filename:'js/facets.js' });
 const facets = context.window.FilmFacets;
-assert.ok(facets && typeof facets.facetHTML === 'function', '词典标签模块未正确导出');
+assert.ok(facets && typeof facets.facetHTML === 'function', '词典标签模块没有导出');
 const keys = Object.keys(facets.FACETS);
-assert.equal(keys.length, 46, '知识标签数量必须等于 46');
-assert.deepEqual(new Set(keys), terms, '知识标签未与现有词典全部对应');
+assert.equal(keys.length, 46, '词典知识标签数量不完整');
+assert.deepEqual(new Set(keys), terms, '知识标签与术语 ID 没有完全对应');
 for (const key of keys) {
   const labels = facets.FACETS[key];
   assert.ok(Array.isArray(labels) && labels.length === 2 &&
-    labels.every(x => typeof x === 'string' && x.length > 0),
-    '标签数据不完整：' + key);
+    labels.every(v => typeof v === 'string' && v.length > 0),
+    '术语标签格式错误：' + key);
 }
+
+// Pure search matcher tests do not need browser DOM.
+vm.runInNewContext(readFileSync('js/dictionary-tools.js','utf8'), context, { filename:'js/dictionary-tools.js' });
+const finder = context.window.FilmDictionaryTools;
+assert.ok(finder && typeof finder.init === 'function', '搜索与并排对照模块没有导出');
+assert.equal(finder.normalize('ＰＯＶ　Shot'), 'pov shot', '全角英文字母未规范化');
+assert.equal(finder.matches('Push In 推镜 Dolly', 'push'), true, '英文查找失败');
+assert.equal(finder.matches('Low Angle 仰拍', '仰拍'), true, '中文查找失败');
+assert.equal(finder.matches('Close Up 特写', 'close 特写'), true, '多词查找失败');
+assert.equal(finder.matches('Orbit 环绕', 'pan'), false, '无关术语误匹配');
 for (const [, src] of index.matchAll(/<script\s+src="([^"]+)"/g)) requireFile(src);
 for (const [, src] of lab.matchAll(/<script\s+type="module"\s+src="([^"]+)"/g)) requireFile(src);
-console.log('PASS: 46 条术语及对应标签、词典入口、3D 实验室入口、脚本路径；概念答题已清理。');
+console.log('PASS: 46 条术语、搜索匹配和对照入口、摄影机观察与 A/B 截图结构、脚本引用均通过静态检查。');
