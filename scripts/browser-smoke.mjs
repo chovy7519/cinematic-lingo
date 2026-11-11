@@ -14,6 +14,16 @@ try {
   await page.goto(base, { waitUntil:'domcontentloaded' });
   await page.waitForSelector('.card-compare-btn');
   assert.equal(await page.locator('.card').count(), 46, 'dictionary should render 46 terms');
+  await page.screenshot({path:'/tmp/cinematic-art-dictionary-v04.png'});
+  // Stable close-up review: render the exact target viewBox without autoplay.
+  const closeup = page.locator('#shot-cu .stage');
+  await closeup.evaluate(stage => {
+    stage.setAttribute('data-played', '1');
+    const crop = JSON.parse(stage.getAttribute('data-to'));
+    stage.querySelector('.scene-holder svg')
+      .setAttribute('viewBox', [crop.x,crop.y,crop.w,crop.h].join(' '));
+  });
+  await closeup.screenshot({path:'/tmp/cinematic-art-closeup-v04.png'});
 
   const search = page.locator('#term-search');
   await search.fill('POV');
@@ -47,6 +57,8 @@ try {
   // Verify dictionary-to-lab deep linking and real WebGL rendering.
   await page.goto(base + 'lab.html?mode=angle&preset=1', {waitUntil:'domcontentloaded'});
   await page.waitForSelector('#lab-shot canvas', {timeout:30000});
+  await page.screenshot({path:'/tmp/cinematic-art-lab-v04.png'});
+  await page.locator('#lab-shot canvas').screenshot({path:'/tmp/cinematic-art-shot-v04.png'});
   assert.equal(await page.locator('[data-mode="angle"]').getAttribute('aria-pressed'), 'true');
   const spatial = page.locator('#lab-spatial canvas');
   const shot = page.locator('#lab-shot canvas');
@@ -60,6 +72,14 @@ try {
   const after = await spatial.screenshot();
   assert.notDeepEqual(before, after, 'dragging overview should change spatial view');
   await page.locator('#lab-overview-reset').click();
+  // Art-quality framing review: stable medium close-up at neutral eye level.
+  for (const [id,value] of [['height','1.6'],['distance','3'],['focal','50']]) {
+    await page.locator('#'+id).evaluate((input,next) => {
+      input.value = next;
+      input.dispatchEvent(new Event('input',{bubbles:true}));
+    }, value);
+  }
+  await page.locator('#lab-shot canvas').screenshot({path:'/tmp/cinematic-art-portrait-v04.png'});
 
   await page.locator('#lab-save-a').click();
   assert.equal(await page.locator('#lab-capture-a img').count(), 1, 'A screenshot should be retained');

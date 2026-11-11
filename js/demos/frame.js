@@ -70,7 +70,7 @@
       svg += '<path class="g-fg" d="M0,900 L0,640 Q140,600 260,700 Q360,790 430,900 Z"/>' +
         '<text class="g-label" x="70" y="590">前景</text>' +
         '<text class="g-label" x="520" y="700">中景（人物）</text>' +
-        '<text class="g-label" x="1120" y="270">背景（山）</text>' +
+        '<text class="g-label" x="1120" y="270">背景（建筑）</text>' +
         '<path class="g-line" d="M150,620 L230,690 M700,650 L830,620 M1190,310 L1080,350"/>';
 
     } else if (kind === 'negative') {

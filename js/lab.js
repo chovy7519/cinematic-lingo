@@ -1,5 +1,6 @@
 /* 独立实验页：不依赖原词典的全局脚本，也不修改 46 个 SVG 演示。 */
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
+import { createStudio } from './studio-set.js';
 
 const MODES = {
   dolly: {
@@ -61,56 +62,9 @@ const els = {
 };
 const captures = { a: null, b: null };
 
-const scene = new THREE.Scene();
-scene.background = new THREE.Color('#cbd9d9');
-scene.add(new THREE.HemisphereLight(0xe8f5fa, 0x73766c, 2.15));
-const sun = new THREE.DirectionalLight(0xffe8c8, 2);
-sun.position.set(-3, 9, 6);
-scene.add(sun);
-const mat = (color, roughness = 0.9) => new THREE.MeshStandardMaterial({color, roughness});
-function box(w,h,d,x,y,z,material) {
-  const mesh = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), material);
-  mesh.position.set(x,y,z);
-  scene.add(mesh);
-  return mesh;
-}
-function sphere(r,x,y,z,material) {
-  const mesh = new THREE.Mesh(new THREE.SphereGeometry(r,18,12), material);
-  mesh.position.set(x,y,z);
-  scene.add(mesh);
-  return mesh;
-}
-const ground = new THREE.Mesh(new THREE.PlaneGeometry(60,60), mat('#b7c8b7'));
-ground.rotation.x = -Math.PI/2;
-ground.position.y = -0.035;
-scene.add(ground);
-const grid = new THREE.GridHelper(20,20,0x79918a,0x9aafa4);
-grid.position.y=0.005;
-scene.add(grid);
+// V0.4 authored film-stage art stays independent of camera mathematics.
+const { scene, mat } = createStudio(THREE);
 
-// 主体：简化人物，朝向 +Z；近处标尺与远处建筑用于辨认视差。
-const coat = mat('#344d4d');
-const skin = mat('#e5a77c');
-const hair = mat('#343b44');
-box(0.65,0.85,0.34,0,1.02,0,coat);
-box(0.22,0.62,0.24,-0.18,0.31,0,coat);
-box(0.22,0.62,0.24,0.18,0.31,0,coat);
-box(0.19,0.74,0.23,-0.45,1.05,0,coat);
-box(0.19,0.74,0.23,0.45,1.05,0,coat);
-sphere(0.285,0,1.7,0,skin);
-sphere(0.042,-0.11,1.72,0.268,hair);
-sphere(0.042,0.11,1.72,0.268,hair);
-box(0.52,0.11,0.36,0,1.95,-0.03,hair);
-box(0.15,2.3,0.15,-0.65,1.15,1.8,mat('#bc5f42'));  // 近景柱
-box(0.22,1.2,0.22,1.5,0.6,1.0,mat('#a98f5e'));
-const buildingA=mat('#6e8e93');
-const buildingB=mat('#c4a57b');
-box(2.4,3.6,1.6,-2.7,1.8,-6,buildingA);
-box(1.7,2.7,1.5,2.6,1.35,-7,buildingB);
-box(1.2,4.5,1.1,0.9,2.25,-10,mat('#849ea8'));
-for(let i=0;i<4;i++){
- box(0.35,0.46,0.025,-3.3+(i%2)*1.15,1.3+Math.floor(i/2)*1.15,-5.18,mat('#f7e3b9'));
-}
 const camera = new THREE.PerspectiveCamera(40,1,0.08,100);
 const overviewCamera = new THREE.PerspectiveCamera(47,1,0.1,120);
 overviewCamera.position.set(10,6,12);
@@ -142,19 +96,26 @@ function resetOverview() {
  paint();
 }
 const helper = new THREE.CameraHelper(camera);
+helper.setColors(0xd5a27e,0x91aaab,0x85999a,0x607b83,0xa2b8b6);
+helper.material.transparent=true;
+helper.material.opacity=.42;
+helper.material.depthTest=false;
+helper.material.toneMapped=false;
 helper.layers.set(1);  // 不让取景画面看到自己的机位线框
 scene.add(helper);
-const cameraBody = new THREE.Mesh(new THREE.BoxGeometry(0.28,0.2,0.45), mat('#b4522f'));
+const cameraBody = new THREE.Mesh(new THREE.BoxGeometry(.31,.23,.47),mat('#b88b6b',.52,.35));
 cameraBody.layers.set(1);
 scene.add(cameraBody);
 
 function makeRenderer(host, keepDrawingBuffer = false) {
  // Retain the shot canvas only so it can be captured from a direct user click.
  const r = new THREE.WebGLRenderer({antialias:true,alpha:false,preserveDrawingBuffer:keepDrawingBuffer});
+ r.shadowMap.enabled=true;
+ r.shadowMap.type=THREE.PCFSoftShadowMap;
  r.setPixelRatio(Math.min(window.devicePixelRatio || 1,2));
  r.outputColorSpace = THREE.SRGBColorSpace;
  r.toneMapping = THREE.ACESFilmicToneMapping;
- r.toneMappingExposure = 1.3;
+ r.toneMappingExposure = 1.08;
  host.appendChild(r.domElement);
  return r;
 }
