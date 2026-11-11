@@ -28,6 +28,8 @@ V0.4 改动先提交到 Draft PR，不改变已验收的主分支版本。摄影
 
 **第二轮角色修整**：词典面部用多层解剖光影平面细化；实验室人物拆分为独立 `js/character-maquette.js` 连续网格模块，并改进服装接缝和鞋形。代码修整不是最终高品质角色资产；专业 Blender 网格、UV/PBR 与 GLB 接入规格见 `docs/V0.4_CHARACTER_PRODUCTION.md`。
 
+**可直接开模的设计包**：`docs/V0.4_HERO_ASSET_DESIGN_CH01_SET01.md` 明确 CH-01「静默观察者」及 SET-01「门槛」的轮廓、比例、材料、坐标与验收镜头。视觉概念板仅用来判断气质和光影；建模尺寸应以文档、正交视图和后续灰模验收为准。
+
 ## V0.3 · 双板块体验深化（实验分支）
 
 ### 可视化词典 · Visual Dictionary
